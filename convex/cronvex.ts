@@ -2,17 +2,31 @@ import { v } from "convex/values";
 import { query, mutation, internalMutation } from "./_generated/server";
 import { internal } from "./_generated/api";
 
-// TODO: need to add some state machine logic to make sure scheduled jobs never
-// get lost, e.g., errors, if this can still happen
+// Do the actual work of the cron job.
+export const worker = internalMutation({
+  args: {
+    message: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // TODO: do some actual interesting work
+    console.log("Running cron job with message:", args.message);
+    ctx.db.insert("syslog", { message: args.message });
+  },
+});
 
+// Recursively reschedule crons after the desired interval. This function is
+// very simple to avoid hitting any user errors that would break the reschduling
+// cycle. In theory this could fail if the backend scheduled down so much that
+// just this short function times out.
 export const cronRunner = internalMutation({
   args: {
     message: v.string(),
   },
   handler: async (ctx, args) => {
-    // TODO: compensate for runtime of the function
-    console.log("Running cron job with message:", args.message);
-    ctx.db.insert("syslog", { message: args.message });
+    ctx.scheduler.runAfter(0, internal.cronvex.worker, {
+      message: args.message,
+    });
+    // TODO: use runAt compensate for runtime of the function
     ctx.scheduler.runAfter(1000 * 60, internal.cronvex.cronRunner, {
       message: args.message,
     });
