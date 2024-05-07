@@ -34,13 +34,13 @@ function SignedIn() {
   const syslog = useQuery(api.demo.tailSyslog) ?? [];
 
   const [message, setMessage] = useState("");
-  const addCron = useMutation(api.demo.addCron);
+  const echo = useMutation(api.demo.echo);
 
-  async function handleAddCron(event: FormEvent) {
+  async function handleEcho(event: FormEvent) {
     event.preventDefault();
     setMessage("");
     try {
-      await addCron({ message: message, cronspec: "* * * * *" });
+      await echo({ message: message, cronspec: "* * * * *" });
     } catch (error) {
       console.error("Failed to add cron:", error);
     }
@@ -66,7 +66,7 @@ function SignedIn() {
             </div>
             <div className="flex items-center">
               <span>* * * * * echo "</span>
-              <form onSubmit={handleAddCron} className="text-black">
+              <form onSubmit={handleEcho} className="text-black">
                 <input
                   value={message}
                   onChange={(event) => setMessage(event.target.value)}

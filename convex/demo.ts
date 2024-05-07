@@ -3,32 +3,26 @@ import { query, mutation, internalMutation } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { interval } from "./cronvex";
 
-export const dummy = internalMutation({
-  args: { message: v.string(), interval: v.float64() },
-  handler: async (ctx, args) => {
-    ctx.db.insert("syslog", {
-      message: `${args.message} [every ${args.interval} ms]`,
-    });
-  },
-});
-
-export const addCron = mutation({
+export const echo = mutation({
   args: {
     message: v.string(),
     cronspec: v.string(),
   },
   handler: async (ctx, args) => {
-    // TODO add users
-    console.log(
-      "Adding new cron job with message:",
-      args.message,
-      "and cronspec:",
-      args.cronspec
-    );
-
-    await interval(ctx, 30 * 1000, internal.demo.dummy, {
+    // TODO change to actually using cronspec
+    await interval(ctx, 30 * 1000, internal.demo.syslog, {
       message: args.message,
       interval: 30,
+    });
+  },
+});
+
+export const syslog = internalMutation({
+  args: { message: v.string(), interval: v.float64() },
+  handler: async (ctx, args) => {
+    // TODO add users
+    ctx.db.insert("syslog", {
+      message: args.message,
     });
   },
 });
