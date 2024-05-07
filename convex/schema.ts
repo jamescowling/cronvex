@@ -13,5 +13,8 @@ export default defineSchema({
     name: v.string(),
     function: v.string(),
     args: v.any(),
+    // Only one of these should be set.
+    seconds: v.optional(v.int64()),
+    cronspec: v.optional(v.string()),
   }).index("name", ["name"]),
 });

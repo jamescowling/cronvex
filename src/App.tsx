@@ -30,11 +30,11 @@ function SignedIn() {
   const { user } = useUser();
   const username = user?.firstName?.toLowerCase();
 
-  const crons = useQuery(api.cronvex.listCrons) ?? [];
-  const syslog = useQuery(api.cronvex.tailSyslog) ?? [];
+  const crons = useQuery(api.demo.listCrons) ?? [];
+  const syslog = useQuery(api.demo.tailSyslog) ?? [];
 
   const [message, setMessage] = useState("");
-  const addCron = useMutation(api.cronvex.addCron);
+  const addCron = useMutation(api.demo.addCron);
 
   async function handleAddCron(event: FormEvent) {
     event.preventDefault();
