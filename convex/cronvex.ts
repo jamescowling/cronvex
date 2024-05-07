@@ -26,6 +26,7 @@ export const rescheduler = internalMutation({
     cronJobId: v.id("crons"),
   },
   handler: async (ctx, args) => {
+    // Cron job is the logical concept we're rescheduling repeatedly.
     const cronJob = await ctx.db.get(args.cronJobId);
     if (!cronJob) {
       throw Error(`Cron job ${args.cronJobId} not found`);
@@ -34,6 +35,8 @@ export const rescheduler = internalMutation({
       throw Error(`Cron job ${args.cronJobId} not scheduled`);
     }
 
+    // Scheduler job is the job that's running right now, that we use to trigger
+    // repeated executions.
     const schedulerJob = await ctx.db.system.get(cronJob.schedulerJobId);
     if (!schedulerJob) {
       throw Error(`Scheduled job ${cronJob.schedulerJobId} not found`);
@@ -44,11 +47,31 @@ export const rescheduler = internalMutation({
       );
     }
 
-    // TODO skip if already running
-    const func = makeFunctionReference<"mutation" | "action">(cronJob.function);
-    console.log(`Running cron job ${cronJob.function}(${cronJob.args})`);
-    await ctx.scheduler.runAfter(0, func, cronJob.args);
+    // Execution job is the previous job used to actually do the work of the cron.
+    const cronFunction = makeFunctionReference<"mutation" | "action">(
+      cronJob.function
+    );
+    var stillRunning = false;
+    if (cronJob.executionJobId) {
+      const executionJob = await ctx.db.system.get(cronJob.executionJobId);
+      if (
+        executionJob &&
+        (executionJob.state.kind === "pending" ||
+          executionJob.state.kind === "inProgress")
+      ) {
+        stillRunning = true;
+      }
+    }
+    if (stillRunning) {
+      console.log(`Cron ${cronJob._id} still running, skipping this run.`);
+    } else {
+      console.log(
+        `Running cron job ${cronJob._id}: ${cronJob.function}(${cronJob.args})`
+      );
+      await ctx.scheduler.runAfter(0, cronFunction, cronJob.args);
+    }
 
+    // Now reschedule the next run.
     if (cronJob.ms) {
       const nextTime = schedulerJob.scheduledTime + cronJob.ms;
       const nextSchedulerJobId = await ctx.scheduler.runAt(
@@ -208,5 +231,8 @@ export async function del(ctx: MutationCtx, cronJobId: Id<"crons">) {
     throw new Error(`Cron job ${cronJobId} not scheduled`);
   }
   ctx.scheduler.cancel(cronJob.schedulerJobId);
+  if (cronJob.executionJobId) {
+    await ctx.scheduler.cancel(cronJob.executionJobId);
+  }
   await ctx.db.delete(cronJobId);
 }
