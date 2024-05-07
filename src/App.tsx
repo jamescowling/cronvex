@@ -91,7 +91,8 @@ function SignedIn() {
             <div># m h dom mon dow command</div>
             {crons.map((cron, index) => (
               <div key={index}>
-                {cron.cronspec} echo "{cron.message}"
+                {cron.cronspec}
+                {cron.ms} {cron.function}({JSON.stringify(cron.args)})
               </div>
             ))}
           </code>

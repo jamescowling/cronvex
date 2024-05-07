@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { query, mutation, internalMutation } from "./_generated/server";
 import { internal } from "./_generated/api";
-import { interval } from "./cronvex";
+import { interval, list } from "./cronvex";
 
 export const echo = mutation({
   args: {
@@ -27,15 +27,9 @@ export const syslog = internalMutation({
   },
 });
 
-// TODO hmm how will i implement the subscription across the "component" boundary
 export const listCrons = query({
   handler: async (ctx) => {
-    return [];
-    // const crons = await ctx.db.query("cronjobs").collect();
-    // return crons.map((cron) => ({
-    //   message: cron.message,
-    //   cronspec: cron.cronspec,
-    // }));
+    return await list(ctx);
   },
 });
 

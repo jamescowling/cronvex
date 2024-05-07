@@ -7,7 +7,7 @@ import {
 } from "convex/server";
 import { v, Value } from "convex/values";
 import { parseArgs } from "./common";
-import { MutationCtx, internalMutation } from "./_generated/server";
+import { MutationCtx, QueryCtx, internalMutation } from "./_generated/server";
 import { internal } from "./_generated/api";
 
 // TODO ability to change a cron
@@ -162,7 +162,7 @@ export async function interval<FuncRef extends SchedulableFunctionReference>(
  * to schedule.
  * @param args - The arguments to the function.
  */
-async function cron<FuncRef extends SchedulableFunctionReference>(
+export async function cron<FuncRef extends SchedulableFunctionReference>(
   ctx: MutationCtx,
   cron: string,
   functionReference: FuncRef,
@@ -178,4 +178,8 @@ async function cron<FuncRef extends SchedulableFunctionReference>(
     functionReference,
     ...args
   );
+}
+
+export async function list(ctx: QueryCtx) {
+  return await ctx.db.query("crons").collect();
 }
