@@ -65,9 +65,7 @@ export const rescheduler = internalMutation({
     if (stillRunning) {
       console.log(`Cron ${cronJob._id} still running, skipping this run.`);
     } else {
-      console.log(
-        `Running cron job ${cronJob._id}: ${cronJob.function}(${cronJob.args})`
-      );
+      console.log(`Running cron job ${cronJob._id}: ${cronJob.function}`);
       await ctx.scheduler.runAfter(0, cronFunction, cronJob.args);
     }
 

@@ -1,5 +1,7 @@
 import { Value } from "convex/values";
 
+// TODO export these from Convex if they're not already
+
 /**
  * Validate that the arguments to a Convex function are an object, defaulting
  * `undefined` to `{}`.
@@ -18,45 +20,6 @@ export function parseArgs(
     );
   }
   return args;
-}
-
-export function validateDeploymentUrl(deploymentUrl: string) {
-  // Don't use things like `new URL(deploymentUrl).hostname` since these aren't
-  // supported by React Native's JS environment
-  if (typeof deploymentUrl === "undefined") {
-    throw new Error(
-      `Client created with undefined deployment address. If you used an environment variable, check that it's set.`
-    );
-  }
-  if (typeof deploymentUrl !== "string") {
-    throw new Error(
-      `Invalid deployment address: found ${deploymentUrl as any}".`
-    );
-  }
-  if (
-    !(deploymentUrl.startsWith("http:") || deploymentUrl.startsWith("https:"))
-  ) {
-    throw new Error(
-      `Invalid deployment address: Must start with "https://" or "http://". Found "${deploymentUrl}".`
-    );
-  }
-
-  // Skip validation on localhost because it's for internal Convex development.
-  if (
-    deploymentUrl.indexOf("127.0.0.1") !== -1 ||
-    deploymentUrl.indexOf("localhost") !== -1
-  ) {
-    return;
-  }
-
-  if (
-    !deploymentUrl.endsWith(".convex.cloud") &&
-    !deploymentUrl.includes("0.0.0.0")
-  ) {
-    throw new Error(
-      `Invalid deployment address: Must end with ".convex.cloud". Found "${deploymentUrl}".`
-    );
-  }
 }
 
 /**
