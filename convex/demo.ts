@@ -12,13 +12,12 @@ export const echo = mutation({
     // TODO change to actually using cronspec
     await interval(ctx, 30 * 1000, internal.demo.syslog, {
       message: args.message,
-      interval: 30,
     });
   },
 });
 
 export const syslog = internalMutation({
-  args: { message: v.string(), interval: v.float64() },
+  args: { message: v.string() },
   handler: async (ctx, args) => {
     // TODO add users
     ctx.db.insert("syslog", {

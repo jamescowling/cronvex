@@ -11,5 +11,6 @@ export default defineSchema({
     // Only one of these should be set.
     ms: v.optional(v.float64()),
     cronspec: v.optional(v.string()),
+    schedulerJobId: v.optional(v.id("_scheduled_functions")),
   }),
 });
