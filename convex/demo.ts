@@ -1,14 +1,13 @@
 import { v } from "convex/values";
 import { query, mutation, internalMutation } from "./_generated/server";
 import { internal } from "./_generated/api";
-import { hourly } from "./cronvex";
+import { interval } from "./cronvex";
 
 export const dummy = internalMutation({
-  args: { nonce: v.float64() },
+  args: { message: v.string(), interval: v.float64() },
   handler: async (ctx, args) => {
-    console.log("Dummy cron job with nonce:", args.nonce);
     ctx.db.insert("syslog", {
-      message: `dummy cron job with nonce ${args.nonce}`,
+      message: `${args.message} [every ${args.interval} ms]`,
     });
   },
 });
@@ -27,25 +26,22 @@ export const addCron = mutation({
       args.cronspec
     );
 
-    await hourly(
-      ctx,
-      "my even hotter cron",
-      { minuteUTC: 0 },
-      internal.demo.dummy,
-      {
-        nonce: 42,
-      }
-    );
+    await interval(ctx, 30 * 1000, internal.demo.dummy, {
+      message: args.message,
+      interval: 30,
+    });
   },
 });
 
+// TODO hmm how will i implement the subscription across the "component" boundary
 export const listCrons = query({
   handler: async (ctx) => {
-    const crons = await ctx.db.query("cronjobs").collect();
-    return crons.map((cron) => ({
-      message: cron.message,
-      cronspec: cron.cronspec,
-    }));
+    return [];
+    // const crons = await ctx.db.query("cronjobs").collect();
+    // return crons.map((cron) => ({
+    //   message: cron.message,
+    //   cronspec: cron.cronspec,
+    // }));
   },
 });
 
