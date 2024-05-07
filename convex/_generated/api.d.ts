@@ -14,6 +14,8 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as common from "../common.js";
+import type * as crons2 from "../crons2.js";
 import type * as cronvex from "../cronvex.js";
 
 /**
@@ -25,6 +27,8 @@ import type * as cronvex from "../cronvex.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  common: typeof common;
+  crons2: typeof crons2;
   cronvex: typeof cronvex;
 }>;
 export declare const api: FilterApi<

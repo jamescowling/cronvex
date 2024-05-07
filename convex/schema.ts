@@ -9,4 +9,9 @@ export default defineSchema({
   syslog: defineTable({
     message: v.string(),
   }),
+  crons: defineTable({
+    name: v.string(),
+    function: v.string(),
+    args: v.any(),
+  }).index("name", ["name"]),
 });

@@ -57,7 +57,7 @@ function SignedIn() {
         </div>
       </div>
 
-      <div className="bg-black text-white p-4 rounded-md font-mono">
+      <div className="bg-foreground text-background p-4 rounded-md font-mono">
         <pre>
           <code>
             <div>
