@@ -33,6 +33,7 @@ function SignedIn() {
   const crons = useQuery(api.demo.listCrons) ?? [];
   const syslog = useQuery(api.demo.tailSyslog) ?? [];
 
+  const [cronspec, setCronspec] = useState("* * * * *");
   const [message, setMessage] = useState("");
   const echo = useMutation(api.demo.echo);
 
@@ -40,7 +41,7 @@ function SignedIn() {
     event.preventDefault();
     setMessage("");
     try {
-      await echo({ message: message, cronspec: "* * * * *" });
+      await echo({ message: message, cronspec: cronspec });
     } catch (error) {
       console.error("Failed to add cron:", error);
     }
@@ -65,16 +66,23 @@ function SignedIn() {
               <span className="text-sky-400">~</span>$ crontab -e
             </div>
             <div className="flex items-center">
-              <span>* * * * * echo "</span>
-              <form onSubmit={handleEcho} className="text-black">
+              <form onSubmit={handleEcho}>
+                <input
+                  value={cronspec}
+                  onChange={(event) => setCronspec(event.target.value)}
+                  placeholder="* * * * *"
+                  className="w-32 text-black"
+                />
+                <span> echo "</span>
                 <input
                   value={message}
                   onChange={(event) => setMessage(event.target.value)}
                   placeholder="Write a message…"
+                  className="text-black"
                 />
+                <span>"</span>
                 <input type="submit" value="Send" disabled={!message} hidden />
               </form>
-              <span>"</span>
             </div>
             <div>...</div>
           </code>
@@ -91,8 +99,7 @@ function SignedIn() {
             <div># m h dom mon dow command</div>
             {crons.map((cron, index) => (
               <div key={index}>
-                {cron.cronspec}
-                {cron.ms} {cron.function}({JSON.stringify(cron.args)})
+                {cron.cronspec} {cron.function}("{cron.args.message}"))
               </div>
             ))}
           </code>
