@@ -1,35 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { SignInButton, UserButton, useUser } from "@clerk/clerk-react";
-import {
-  Authenticated,
-  Unauthenticated,
-  useMutation,
-  useQuery,
-} from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { FormEvent, useState } from "react";
 
 export default function App() {
-  return (
-    <main className="container max-w-2xl flex flex-col gap-8">
-      <Authenticated>
-        <SignedIn />
-      </Authenticated>
-      <Unauthenticated>
-        <div className="flex justify-center">
-          <SignInButton mode="modal">
-            <Button>Sign in</Button>
-          </SignInButton>
-        </div>
-      </Unauthenticated>
-    </main>
-  );
-}
-
-function SignedIn() {
-  const { user } = useUser();
-  const username = user?.firstName?.toLowerCase();
-
   const crons = useQuery(api.demo.listCrons) ?? [];
   const syslog = useQuery(api.demo.tailSyslog) ?? [];
 
@@ -48,21 +21,18 @@ function SignedIn() {
   }
 
   return (
-    <>
+    <main className="container max-w-2xl flex flex-col gap-8">
       <div className="flex justify-between items-center">
         <h1 className="text-4xl font-extrabold font-mono my-8">
           $ cronvex<span className="animate-blink">_</span>
         </h1>
-        <div className="flex gap-4">
-          <UserButton afterSignOutUrl="#" />
-        </div>
       </div>
 
       <div className="bg-foreground text-background p-4 rounded-md font-mono">
         <pre>
           <code>
             <div>
-              <span className="text-lime-500">{username}@cronvex</span>:
+              <span className="text-lime-500">cronvex</span>:
               <span className="text-sky-400">~</span>$ crontab -e
             </div>
             <div className="flex items-center">
@@ -93,7 +63,7 @@ function SignedIn() {
         <pre>
           <code>
             <div>
-              <span className="text-lime-500">{username}@cronvex</span>:
+              <span className="text-lime-500">cronvex</span>:
               <span className="text-sky-400">~</span>$ crontab -l
             </div>
             <div># m h dom mon dow command</div>
@@ -110,7 +80,7 @@ function SignedIn() {
         <pre>
           <code>
             <div>
-              <span className="text-lime-500">{username}@cronvex</span>:
+              <span className="text-lime-500">cronvex</span>:
               <span className="text-sky-400">~</span>$ tail -f /var/log/syslog
             </div>
             <div>...</div>
@@ -122,6 +92,6 @@ function SignedIn() {
           </code>
         </pre>
       </div>
-    </>
+    </main>
   );
 }
