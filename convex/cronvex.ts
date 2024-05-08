@@ -10,13 +10,19 @@ import { parseArgs } from "./common";
 import { MutationCtx, QueryCtx, internalMutation } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
+import parser from "cron-parser";
 
 // TODO idempotent bootstrap
 
-function nextScheduledTime(cronspec: string) {
-  // TODO implement
-  throw new Error("Not implemented");
-  return new Date();
+// TODO will the scheduler fail if it's in the past?
+function nextScheduledTime(prevTs: number, cronspec: string) {
+  var options = {
+    currentDate: new Date(prevTs),
+  };
+  const interval = parser.parseExpression(cronspec, options);
+  const nextTime = interval.next().toDate();
+  console.log(`Scheduling next in ${nextTime.getTime() - prevTs}ms`);
+  return nextTime;
 }
 
 // TODO what to do if this times out and fails?
@@ -83,9 +89,12 @@ export const rescheduler = internalMutation({
         schedulerJobId: nextSchedulerJobId,
       });
     } else if (cronJob.cronspec) {
-      const t = nextScheduledTime(cronJob.cronspec);
+      const nextTime = nextScheduledTime(
+        schedulerJob.scheduledTime,
+        cronJob.cronspec
+      );
       const nextSchedulerJobId = await ctx.scheduler.runAt(
-        t,
+        nextTime,
         internal.cronvex.rescheduler,
         {
           cronJobId: args.cronJobId,
@@ -140,7 +149,7 @@ async function scheduleCron(
     cronspec: schedule.cronspec,
   });
   const schedulerJobId = await ctx.scheduler.runAt(
-    nextScheduledTime(schedule.cronspec),
+    nextScheduledTime(new Date().getTime(), schedule.cronspec),
     internal.cronvex.rescheduler,
     {
       cronJobId,
@@ -200,10 +209,7 @@ export async function cron<FuncRef extends SchedulableFunctionReference>(
   functionReference: FuncRef,
   ...args: OptionalRestArgs<FuncRef>
 ) {
-  if (!isValidCron(cronspec)) {
-    throw new Error(`Invalid cron string: ${cronspec}`);
-  }
-
+  parser.parseExpression(cronspec);
   return await scheduleCron(
     ctx,
     { cronspec, type: "cron" },

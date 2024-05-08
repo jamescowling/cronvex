@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { query, mutation, internalMutation } from "./_generated/server";
 import { internal } from "./_generated/api";
-import { interval, list } from "./cronvex";
+import { cron, interval, list } from "./cronvex";
 
 export const echo = mutation({
   args: {
@@ -10,7 +10,7 @@ export const echo = mutation({
   },
   handler: async (ctx, args) => {
     // TODO change to actually using cronspec
-    await interval(ctx, 30 * 1000, internal.demo.syslog, {
+    await cron(ctx, "* $ *H* *", internal.demo.syslog, {
       message: args.message,
     });
   },
