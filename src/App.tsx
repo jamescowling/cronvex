@@ -69,7 +69,7 @@ export default function App() {
             <div># m h dom mon dow command</div>
             {crons.map((cron, index) => (
               <div key={index}>
-                {cron.cronspec} {cron.function}("{cron.args.message}"))
+                {cron.cronspec} {cron.function}("{cron.args.message}")
               </div>
             ))}
           </code>

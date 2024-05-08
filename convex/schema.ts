@@ -2,9 +2,6 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
-  syslog: defineTable({
-    message: v.string(),
-  }),
   crons: defineTable({
     function: v.string(),
     args: v.any(),
@@ -13,5 +10,8 @@ export default defineSchema({
     cronspec: v.optional(v.string()),
     schedulerJobId: v.optional(v.id("_scheduled_functions")),
     executionJobId: v.optional(v.id("_scheduled_functions")),
+  }),
+  syslog: defineTable({
+    message: v.string(),
   }),
 });
