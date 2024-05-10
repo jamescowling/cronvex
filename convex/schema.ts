@@ -10,8 +10,8 @@ export default defineSchema({
     // Args as an object.
     args: v.any(),
 
-    // // Optional unique name.
-    // name: v.optional(v.string()),
+    // Optional unique name.
+    name: v.optional(v.string()),
 
     // Schedule, only one should be set.
     ms: v.optional(v.float64()), // milliseconds
@@ -20,7 +20,7 @@ export default defineSchema({
     // References to scheduled jobs.
     schedulerJobId: v.optional(v.id("_scheduled_functions")),
     executionJobId: v.optional(v.id("_scheduled_functions")),
-  }),
+  }).index("name", ["name"]),
 
   // Demo app table.
   syslog: defineTable({

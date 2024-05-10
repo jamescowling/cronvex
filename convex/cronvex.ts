@@ -14,9 +14,6 @@ import { internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 import parser from "cron-parser";
 
-// TODO add a wrapper that makes it easy to bootstrap a bunch of crons with
-// idempotence, e.g., have a unique name for them or something
-
 // TODO check if the scheduler will fail if we try to schedule in the past
 
 // TODO probably want to add some kind of lightweight should-never-fail janitor
@@ -52,11 +49,42 @@ export async function cron<FuncRef extends SchedulableFunctionReference>(
   functionReference: FuncRef,
   ...args: OptionalRestArgs<FuncRef>
 ) {
-  parser.parseExpression(cronspec);
   return await scheduleCron(
     ctx,
     { cronspec, type: "cron" },
     functionReference,
+    undefined,
+    ...args
+  );
+}
+
+/**
+ * Schedule a mutation or action with the given unique name to run on a recurring basis.
+ *
+ * Will throw an error if a cron job with the same name already exists.
+ *
+ * @param ctx - Caller mutation context.
+ * @param name - Unique name for the cron job.
+ * @param cronspec - Cron string like `"15 7 * * *"` (Every day at 7:15 UTC)
+ * @param functionReference - A {@link FunctionReference} for the function
+ * to schedule.
+ * @param args - The arguments to the function.
+ * @returns The ID of the cron job.
+ */
+export async function cronWithName<
+  FuncRef extends SchedulableFunctionReference
+>(
+  ctx: MutationCtx,
+  name: string,
+  cronspec: string,
+  functionReference: FuncRef,
+  ...args: OptionalRestArgs<FuncRef>
+) {
+  return await scheduleCron(
+    ctx,
+    { cronspec, type: "cron" },
+    functionReference,
+    name,
     ...args
   );
 }
@@ -80,11 +108,38 @@ export async function interval<FuncRef extends SchedulableFunctionReference>(
   func: FuncRef,
   ...args: OptionalRestArgs<FuncRef>
 ) {
-  // Save people from shooting themselves in the foot.
-  if (ms < 1000) {
-    throw new Error("Interval must be >= 1000ms");
-  }
-  return await scheduleCron(ctx, { type: "interval", ms }, func, ...args);
+  return await scheduleCron(
+    ctx,
+    { type: "interval", ms },
+    func,
+    undefined,
+    ...args
+  );
+}
+
+/**
+ * Schedule a mutation or action with the given unique name to run on the given
+ * interval .
+ *
+ * Will throw an error if a cron job with the same name already exists.
+ *
+ * @param ctx - Caller mutation context.
+ * @param name - Unique name for the cron job.
+ * @param ms - The time in ms between runs for this scheduled job, >= 1000.
+ * @param func - A {@link FunctionReference} for the function to schedule.
+ * @param args - Any arguments to the function.
+ * @returns The ID of the cron job.
+ */
+export async function intervalWithName<
+  FuncRef extends SchedulableFunctionReference
+>(
+  ctx: MutationCtx,
+  name: string,
+  ms: number,
+  func: FuncRef,
+  ...args: OptionalRestArgs<FuncRef>
+) {
+  return await scheduleCron(ctx, { type: "interval", ms }, func, name, ...args);
 }
 
 /**
@@ -98,7 +153,7 @@ export async function list(ctx: QueryCtx) {
 }
 
 /**
- * Get an existing cron job.
+ * Get an existing cron job by id.
  *
  * @param ctx - Caller query context.
  * @param cronJobId  - ID of the cron job.
@@ -109,9 +164,24 @@ export async function get(ctx: QueryCtx, cronJobId: Id<"crons">) {
 }
 
 /**
- * Delete and deschedule a cron job.
+ * Get an existing cron job by name.
+ * `name` is optional and unique for cron jobs.
  *
- * @param ctx - Called mutation context.
+ * @param ctx - Caller query context.
+ * @param name  - Name of the cron job.
+ * @returns Cron job document.
+ */
+export async function getByName(ctx: QueryCtx, name: string) {
+  return await ctx.db
+    .query("crons")
+    .withIndex("name", (q) => q.eq("name", name))
+    .unique();
+}
+
+/**
+ * Delete and deschedule a cron job by id.
+ *
+ * @param ctx - Caller mutation context.
  * @param cronJobId - ID of the cron job.
  */
 export async function del(ctx: MutationCtx, cronJobId: Id<"crons">) {
@@ -129,6 +199,20 @@ export async function del(ctx: MutationCtx, cronJobId: Id<"crons">) {
   await ctx.db.delete(cronJobId);
 }
 
+/**
+ * Delete and deschedule a cron job by name.
+ *
+ * @param ctx - Caller mutation context.
+ * @param name - Name of the cron job.
+ */
+export async function delByName(ctx: MutationCtx, name: string) {
+  const cronJob = await getByName(ctx, name);
+  if (!cronJob) {
+    throw new Error(`Cron job ${name} not found`);
+  }
+  await del(ctx, cronJob._id);
+}
+
 // The two types of crons.
 type Schedule =
   | { type: "interval"; ms: number }
@@ -139,8 +223,20 @@ async function scheduleCron(
   ctx: MutationCtx,
   schedule: Schedule,
   func: SchedulableFunctionReference,
+  name?: string,
   args?: Record<string, Value>
 ) {
+  // Input validation
+  if (name && (await getByName(ctx, name))) {
+    throw new Error(`Cron job with name ${name} already exists`);
+  }
+  if (schedule.type === "interval" && schedule.ms < 1000) {
+    throw new Error("Interval must be >= 1000ms"); // Just a sanity check.
+  }
+  if (schedule.type === "cron" && !parser.parseExpression(schedule.cronspec)) {
+    throw new Error(`Invalid cronspec: ${schedule.cronspec}`);
+  }
+
   args = parseArgs(args);
   const functionName = getFunctionName(func);
 
@@ -148,6 +244,7 @@ async function scheduleCron(
     const cronJobId = await ctx.db.insert("crons", {
       function: functionName,
       args,
+      name,
       ms: schedule.ms,
     });
     console.log(
@@ -167,6 +264,7 @@ async function scheduleCron(
   const cronJobId = await ctx.db.insert("crons", {
     function: functionName,
     args,
+    name,
     cronspec: schedule.cronspec,
   });
   const schedulerJobId = await ctx.scheduler.runAt(

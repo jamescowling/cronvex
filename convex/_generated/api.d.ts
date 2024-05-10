@@ -17,6 +17,7 @@ import type {
 import type * as common from "../common.js";
 import type * as cronvex from "../cronvex.js";
 import type * as demo from "../demo.js";
+import type * as init from "../init.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   common: typeof common;
   cronvex: typeof cronvex;
   demo: typeof demo;
+  init: typeof init;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
