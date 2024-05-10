@@ -6,7 +6,7 @@ import { cronWithName, getByName } from "./cronvex";
 // similarly to the old crons.ts file. It needs to be run manually, e.g., by
 // running `convex dev --run init`.
 export default internalMutation({
-  handler: async (ctx, args) => {
+  handler: async (ctx) => {
     if ((await getByName(ctx, "daily")) == null) {
       await cronWithName(ctx, "daily", "0 0 * * *", internal.demo.syslog, {
         message: "daily cron",
