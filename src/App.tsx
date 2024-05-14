@@ -20,8 +20,8 @@ export default function App() {
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
       <main className="container flex flex-col gap-8">
         <div className="flex justify-between items-center">
-          <h1 className="text-4xl font-extrabold font-mono my-8">$ cronvex_</h1>
-          <div className="flex gap-2  ">
+          <h1 className="text-4xl font-extrabold font-mono mt-8">$ cronvex_</h1>
+          <div className="flex gap-2 mt-8">
             <a href="https://github.com/JamesCowling/cronvex">
               <Button variant="outline" className="gap-2">
                 <svg fill="currentColor" viewBox="0 0 24 24" className="h-6">

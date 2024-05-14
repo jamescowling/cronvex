@@ -67,7 +67,7 @@ export function Register() {
     <div>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button>Add Cron</Button>
+          <Button>Add a cron</Button>
         </DialogTrigger>
 
         <DialogContent className="sm:max-w-[600px]">

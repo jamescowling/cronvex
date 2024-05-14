@@ -97,9 +97,7 @@ export function Crons() {
         </CardHeader>
         <CardContent>
           <Register />
-          <div className="mx-auto py-10">
-            <DataTable columns={columns} data={crons} />
-          </div>
+          <DataTable columns={columns} data={crons} />
         </CardContent>
       </Card>
     </div>
