@@ -6,7 +6,7 @@ import { internalMutation } from "./_generated/server";
 // similarly to the old crons.ts file. It needs to be run manually, e.g., by
 // running `convex dev --run init`.
 export default internalMutation({
-  handler: async (ctx) => {
+  handler: async () => {
     // TODO change this to register an actual cron
     // if ((await getByName(ctx, "daily")) == null) {
     //   await cronWithName(
