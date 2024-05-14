@@ -1,6 +1,5 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { url } from "inspector";
 
 export default defineSchema({
   // Cronvex table.
