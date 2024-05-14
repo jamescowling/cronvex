@@ -5,12 +5,14 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 
 export function Register() {
   const [formData, setFormData] = useState({
@@ -23,6 +25,7 @@ export function Register() {
   });
 
   const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   const registerCron = useMutation(api.demo.registerCron);
 
@@ -51,6 +54,7 @@ export function Register() {
           headers: "",
           body: "",
         });
+        setOpen(false);
       } catch (err) {
         setError("Failed to register cron");
         console.error("Failed to register cron:", err);
@@ -60,83 +64,124 @@ export function Register() {
   );
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Create cron job</CardTitle>
-        <CardDescription>
-          Register a URL and optional parameters to call on a given schedule.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleRegisterCron} className="space-y-4">
-          <div>
-            <Label htmlFor="url">URL</Label>
-            <Input
-              id="url"
-              name="url"
-              value={formData.url}
-              onChange={handleChange}
-              placeholder="https://honorable-panther-344.convex.site/log"
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="cronspec">Cronspec</Label>
-            <Input
-              id="cronspec"
-              name="cronspec"
-              value={formData.cronspec}
-              onChange={handleChange}
-              placeholder="* * * * *"
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="name">Name (optional)</Label>
-            <Input
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="my cool cron"
-            />
-          </div>
-          <div>
-            <Label htmlFor="method">Method (optional)</Label>
-            <Input
-              id="method"
-              name="method"
-              value={formData.method}
-              onChange={handleChange}
-              placeholder="POST"
-            />
-          </div>
-          <div>
-            <Label htmlFor="headers">Headers (optional)</Label>
-            <Input
-              id="headers"
-              name="headers"
-              value={formData.headers}
-              onChange={handleChange}
-              placeholder='{ "Content-Type": "application/json", ... }'
-            />
-          </div>
-          <div>
-            <Label htmlFor="body">Body (optional)</Label>
-            <Input
-              id="body"
-              name="body"
-              value={formData.body}
-              onChange={handleChange}
-              placeholder='{ "author": "User 123", "body": "Hello world" }'
-            />
-          </div>
-          <Button type="submit" disabled={!formData.url}>
-            Register Cron
-          </Button>
-          {error && <p className="text-red-500">{error}</p>}
-        </form>
-      </CardContent>
-    </Card>
+    <div>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button>Add Cron</Button>
+        </DialogTrigger>
+
+        <DialogContent className="sm:max-w-[600px]">
+          <form onSubmit={handleRegisterCron}>
+            <DialogHeader>
+              <DialogTitle>Add Cron</DialogTitle>
+              <DialogDescription>
+                Register a URL to call on a given schedule.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="grid gap-4 py-4">
+              <div className="space-y-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="url" className="text-right">
+                    URL
+                  </Label>
+                  <Input
+                    id="url"
+                    name="url"
+                    value={formData.url}
+                    onChange={handleChange}
+                    placeholder="https://honorable-panther-344.convex.site/log"
+                    required
+                    className="col-span-3"
+                  />
+                </div>
+
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="cronspec" className="text-right">
+                    Cronspec
+                  </Label>
+                  <Input
+                    id="cronspec"
+                    name="cronspec"
+                    value={formData.cronspec}
+                    onChange={handleChange}
+                    placeholder="* * * * *"
+                    required
+                    className="col-span-3"
+                  />
+                </div>
+
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Name (optional)
+                  </Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="my cool cron"
+                    className="col-span-3"
+                  />
+                </div>
+
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="method" className="text-right">
+                    Method (optional)
+                  </Label>
+                  <Input
+                    id="method"
+                    name="method"
+                    value={formData.method}
+                    onChange={handleChange}
+                    placeholder="POST"
+                    className="col-span-3"
+                  />
+                </div>
+
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="headers" className="text-right">
+                    Headers (optional)
+                  </Label>
+                  <Input
+                    id="headers"
+                    name="headers"
+                    value={formData.headers}
+                    onChange={handleChange}
+                    placeholder='{ "Content-Type": "application/json", ... }'
+                    className="col-span-3"
+                  />
+                </div>
+
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="body" className="text-right">
+                    Body (optional)
+                  </Label>
+                  <Input
+                    id="body"
+                    name="body"
+                    value={formData.body}
+                    onChange={handleChange}
+                    placeholder='{ "author": "User 123", "body": "Hello world" }'
+                    className="col-span-3"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <DialogFooter className="grid grid-cols-4 items-center gap-4">
+              <div className="text-left text-red-500 col-span-3">{error}</div>
+              <Button
+                type="submit"
+                className="col-span-1"
+                disabled={!formData.url}
+              >
+                Register cron
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
