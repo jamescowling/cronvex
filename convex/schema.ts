@@ -1,5 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { url } from "inspector";
 
 export default defineSchema({
   // Cronvex table.
@@ -22,8 +23,32 @@ export default defineSchema({
     executionJobId: v.optional(v.id("_scheduled_functions")),
   }).index("name", ["name"]),
 
-  // Demo app table.
-  syslog: defineTable({
-    message: v.string(),
+  // Outgoing webhook requests to send.
+  webhooks: defineTable({
+    url: v.string(),
+    name: v.optional(v.string()),
+    method: v.optional(v.string()), // "GET", "POST", etc.
+    // TODO: this would ideally be a record
+    headers: v.optional(v.string()),
+    body: v.optional(v.string()),
+    cron: v.optional(v.id("crons")),
+  }),
+
+  // Web logs from incoming POST requests.
+  inbound_logs: defineTable({
+    url: v.string(),
+    method: v.string(),
+    headers: v.string(),
+    body: v.string(),
+  }),
+
+  // Web logs from outgoing requests.
+  outbound_logs: defineTable({
+    url: v.string(),
+    method: v.optional(v.string()),
+    headers: v.optional(v.string()),
+    body: v.optional(v.string()),
+    status: v.float64(),
+    response: v.string(),
   }),
 });

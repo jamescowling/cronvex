@@ -7,10 +7,17 @@ import { cronWithName, getByName } from "./cronvex";
 // running `convex dev --run init`.
 export default internalMutation({
   handler: async (ctx) => {
-    if ((await getByName(ctx, "daily")) == null) {
-      await cronWithName(ctx, "daily", "0 0 * * *", internal.demo.syslog, {
-        message: "daily cron",
-      });
-    }
+    // TODO change this to register an actual cron
+    // if ((await getByName(ctx, "daily")) == null) {
+    //   await cronWithName(
+    //     ctx,
+    //     "daily",
+    //     "0 0 * * *",
+    //     internal.weblogs.logInbound,
+    //     {
+    //       message: "daily cron",
+    //     }
+    //   );
+    // }
   },
 });
