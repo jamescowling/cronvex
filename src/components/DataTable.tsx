@@ -45,9 +45,9 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     // TODO need to pass these in from the column spec
-    name: false,
     method: false,
     headers: false,
+    body: false,
   });
   const [rowSelection, setRowSelection] = useState({});
 

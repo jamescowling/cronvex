@@ -24,3 +24,5 @@ TODO: display send errors
 TODO: drop-down to select daily/weekly/monthly etc
 
 TODO: visual refresh
+
+TODO: add tests

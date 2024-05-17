@@ -41,7 +41,7 @@ export const tailInbound = query({
 export const logOutbound = internalMutation({
   args: {
     url: v.string(),
-    method: v.optional(v.string()),
+    method: v.string(),
     headers: v.optional(v.string()),
     body: v.optional(v.string()),
     status: v.float64(),

@@ -19,7 +19,7 @@ export function Register() {
     url: "",
     cronspec: "",
     name: "",
-    method: "",
+    method: "POST",
     headers: "",
     body: "",
   });
@@ -50,7 +50,7 @@ export function Register() {
           url: "",
           cronspec: "",
           name: "",
-          method: "",
+          method: "POST",
           headers: "",
           body: "",
         });
@@ -127,7 +127,7 @@ export function Register() {
 
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="method" className="text-right">
-                    Method (optional)
+                    Method
                   </Label>
                   <Input
                     id="method"
@@ -174,7 +174,9 @@ export function Register() {
               <Button
                 type="submit"
                 className="col-span-1"
-                disabled={!formData.url}
+                disabled={
+                  !formData.url || !formData.cronspec || !formData.method
+                }
               >
                 Register cron
               </Button>

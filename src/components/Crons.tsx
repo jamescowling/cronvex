@@ -20,7 +20,7 @@ type WebhookWithCronspec = {
   _id: Id<"webhooks">;
   _creationTime: number;
   name?: string | undefined;
-  method?: string | undefined;
+  method: string;
   headers?: string | undefined;
   body?: string | undefined;
   cron?: Id<"crons"> | undefined;

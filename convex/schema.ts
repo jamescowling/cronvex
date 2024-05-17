@@ -26,9 +26,8 @@ export default defineSchema({
   webhooks: defineTable({
     url: v.string(),
     name: v.optional(v.string()),
-    method: v.optional(v.string()), // "GET", "POST", etc.
-    // TODO: this would ideally be a record
-    headers: v.optional(v.string()),
+    method: v.string(), // "GET", "POST", etc.
+    headers: v.optional(v.string()), // TODO: migrate to Record type when we add it
     body: v.optional(v.string()),
     cron: v.optional(v.id("crons")),
   }),
@@ -44,7 +43,7 @@ export default defineSchema({
   // Web logs from outgoing requests.
   outbound_logs: defineTable({
     url: v.string(),
-    method: v.optional(v.string()),
+    method: v.string(),
     headers: v.optional(v.string()),
     body: v.optional(v.string()),
     status: v.float64(),

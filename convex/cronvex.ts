@@ -17,11 +17,14 @@ export const registerCron = mutation({
     url: v.string(),
     cronspec: v.string(),
     name: v.optional(v.string()),
-    method: v.optional(v.string()),
+    method: v.string(),
     headers: v.optional(v.string()),
     body: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    if (args.headers) {
+      new Headers(JSON.parse(args.headers)); // validate headers
+    }
     const webhookId = await ctx.db.insert("webhooks", {
       url: args.url,
       name: args.name,
@@ -52,7 +55,7 @@ type WebhookWithCronspec = {
   _id: Id<"webhooks">;
   _creationTime: number;
   name?: string | undefined;
-  method?: string | undefined;
+  method: string;
   headers?: string | undefined;
   body?: string | undefined;
   cron?: Id<"crons"> | undefined;
@@ -102,26 +105,27 @@ export const callWebhook = internalMutation({
 export const fetcher = internalAction({
   args: {
     url: v.string(),
-    method: v.optional(v.string()),
+    method: v.string(),
     headers: v.optional(v.string()),
     body: v.optional(v.string()),
   },
-  handler: async (ctx, args) => {
-    // TODO we should parse this closer to the user input
-    const { url, method = "POST", headers = "{}", body } = args;
-
-    const requestHeaders = new Headers(JSON.parse(headers));
+  handler: async (ctx, { url, method, headers, body }) => {
+    const fetchOptions: RequestInit = {
+      method,
+    };
+    if (headers) {
+      fetchOptions.headers = new Headers(JSON.parse(headers));
+    }
+    if (body) {
+      fetchOptions.body = body;
+    }
 
     let response: Response | null = null;
     let responseBody: string = "";
     let responseStatus: number | null = null;
 
     try {
-      response = await fetch(url, {
-        method,
-        headers: requestHeaders,
-        body,
-      });
+      response = await fetch(url, fetchOptions);
       responseStatus = response.status;
     } catch (error) {
       responseStatus = 500;
