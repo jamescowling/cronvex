@@ -108,20 +108,47 @@ export const fetcher = internalAction({
   },
   handler: async (ctx, args) => {
     // TODO we should parse this closer to the user input
-    const method = args.method || "POST";
-    const headers = new Headers(JSON.parse(args.headers || "{}"));
-    const response = await fetch(args.url, {
+    const { url, method = "POST", headers = "{}", body } = args;
+
+    const requestHeaders = new Headers(JSON.parse(headers));
+
+    let response: Response | null = null;
+    let responseBody: string = "";
+    let responseStatus: number | null = null;
+
+    try {
+      response = await fetch(url, {
+        method,
+        headers: requestHeaders,
+        body,
+      });
+      responseStatus = response.status;
+    } catch (error) {
+      responseStatus = 500;
+      responseBody =
+        error instanceof Error
+          ? `Fetch error: ${error.message}`
+          : "Unknown fetch error";
+    }
+
+    if (response) {
+      try {
+        responseBody = await response.text();
+      } catch (error) {
+        responseBody =
+          error instanceof Error
+            ? `Error reading response text: ${error.message}`
+            : "Unknown error reading response text";
+      }
+    }
+
+    await ctx.runMutation(internal.weblogs.logOutbound, {
+      url,
       method,
       headers,
-      body: args.body,
-    });
-    await ctx.runMutation(internal.weblogs.logOutbound, {
-      url: args.url,
-      method,
-      headers: args.headers,
-      body: args.body,
-      status: response.status,
-      response: await response.text(),
+      body,
+      status: responseStatus,
+      response: responseBody,
     });
   },
 });
