@@ -1,13 +1,26 @@
 # Cronvex
 
-Userspace crons!
+An implementation of a webhook cron service running on Convex. This was built as
+a demo app for userspace crons that are implemented in `cronlib.ts`. We'll
+eventually port these directly into Convex but in the meantime you can copy this
+file if you want to add userspace crons to your own Convex project.
 
-See `cronvex.ts` for the scheduling code. It just supports intervals in ms and
-cronspecs (like `* * * * *`). We can add convenience wrappers for months and
-days etc if needed.
-
-See demo.ts or run the vite app for a simple echo service that runs forever.
+A userspace cron, as opposed to the built-in crons defined in `crons.ts` in a
+Convex project, allow declaration of crons at runtime. The built-in cronx in
+Convex must be defined statically in the `crons.ts` file.
 
 Note that it's _possible_ that a cron will be lost is the system grinds to a
 halt so much that the rescheduler function hits a user timeout. We can add a
 cleanup job for this.
+
+TODO: allow cron deletion
+
+TODO: test pagination works
+
+TODO: stats on how many crons sent
+
+TODO: display send errors
+
+TODO: drop-down to select daily/weekly/monthly etc
+
+TODO: visual refresh

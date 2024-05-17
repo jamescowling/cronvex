@@ -15,8 +15,8 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as common from "../common.js";
+import type * as cronlib from "../cronlib.js";
 import type * as cronvex from "../cronvex.js";
-import type * as demo from "../demo.js";
 import type * as http from "../http.js";
 import type * as init from "../init.js";
 import type * as weblogs from "../weblogs.js";
@@ -31,8 +31,8 @@ import type * as weblogs from "../weblogs.js";
  */
 declare const fullApi: ApiFromModules<{
   common: typeof common;
+  cronlib: typeof cronlib;
   cronvex: typeof cronvex;
-  demo: typeof demo;
   http: typeof http;
   init: typeof init;
   weblogs: typeof weblogs;

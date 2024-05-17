@@ -86,7 +86,7 @@ const columns: ColumnDef<WebhookWithCronspec>[] = [
 ];
 
 export function Crons() {
-  const crons = useQuery(api.demo.listWebhooks) ?? [];
+  const crons = useQuery(api.cronvex.listWebhooks) ?? [];
 
   return (
     <div className="w-full">

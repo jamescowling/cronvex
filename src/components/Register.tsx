@@ -27,7 +27,7 @@ export function Register() {
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
-  const registerCron = useMutation(api.demo.registerCron);
+  const registerCron = useMutation(api.cronvex.registerCron);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;

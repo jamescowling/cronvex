@@ -1,6 +1,6 @@
 // import { internal } from "./_generated/api";
 import { internalMutation } from "./_generated/server";
-// import { cronWithName, getByName } from "./cronvex";
+// import { cronWithName, getByName } from "./cronlib";
 
 // This is an idempotent bootstrap script that can be used to set up crons
 // similarly to the old crons.ts file. It needs to be run manually, e.g., by
