@@ -39,8 +39,6 @@ export function Register() {
 
   const handleRegisterCron = useCallback(
     async (event: FormEvent) => {
-      console.log("register", event);
-      console.log("formData", formData);
       event.preventDefault();
       setError(null);
 

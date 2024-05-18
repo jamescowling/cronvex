@@ -51,6 +51,28 @@ export const listCrons = query({
   },
 });
 
+// TODO this naming is confusing vs webhooks.
+export const deleteCrons = mutation({
+  args: {
+    ids: v.array(v.id("webhooks")),
+  },
+  handler: async (ctx, args) => {
+    await Promise.all(
+      args.ids.map(async (id) => {
+        const webhook = await ctx.db.get(id);
+        if (webhook == null) {
+          throw new Error("Webhook not found");
+        }
+        if (webhook.cron == null) {
+          throw new Error("Webhook cron not found");
+        }
+        await ctx.db.delete(webhook.cron);
+        await ctx.db.delete(id);
+      })
+    );
+  },
+});
+
 type WebhookWithCronspec = {
   _id: Id<"webhooks">;
   _creationTime: number;

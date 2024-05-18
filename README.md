@@ -13,8 +13,6 @@ Note that it's _possible_ that a cron will be lost is the system grinds to a
 halt so much that the rescheduler function hits a user timeout. We can add a
 cleanup job for this.
 
-TODO: allow cron deletion
-
 TODO: test pagination works
 
 TODO: stats on how many crons sent
@@ -26,3 +24,5 @@ TODO: drop-down to select daily/weekly/monthly etc
 TODO: visual refresh
 
 TODO: add tests
+
+TODO: clearer naming between webhooks and crons, their usage isn't always clear

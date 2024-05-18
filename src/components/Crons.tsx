@@ -1,5 +1,5 @@
 import { api } from "../../convex/_generated/api";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import {
   Card,
   CardContent,
@@ -16,7 +16,7 @@ import { CaretSortIcon } from "@radix-ui/react-icons";
 import { Register } from "./Register";
 
 // TODO: remove duplication
-type WebhookWithCronspec = {
+export type WebhookWithCronspec = {
   _id: Id<"webhooks">;
   _creationTime: number;
   name?: string | undefined;
@@ -87,6 +87,15 @@ const columns: ColumnDef<WebhookWithCronspec>[] = [
 
 export function Crons() {
   const crons = useQuery(api.cronvex.listWebhooks) ?? [];
+  const deleteCrons = useMutation(api.cronvex.deleteCrons);
+
+  function getRowId(row: WebhookWithCronspec): string {
+    return (row as WebhookWithCronspec)._id;
+  }
+
+  async function deleteBatch(ids: string[]) {
+    await deleteCrons({ ids: ids as Id<"webhooks">[] });
+  }
 
   return (
     <div className="w-full">
@@ -97,7 +106,17 @@ export function Crons() {
         </CardHeader>
         <CardContent>
           <Register />
-          <DataTable columns={columns} data={crons} />
+          <DataTable
+            columns={columns}
+            data={crons}
+            visibility={{
+              method: false,
+              headers: false,
+              body: false,
+            }}
+            getRowId={getRowId}
+            deleteBatch={deleteBatch}
+          />
         </CardContent>
       </Card>
     </div>

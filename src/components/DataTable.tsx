@@ -13,7 +13,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -35,20 +34,22 @@ import { useState } from "react";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  visibility: {};
+  getRowId: (row: TData) => string;
+  deleteBatch: (ids: string[]) => Promise<void>;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  visibility,
+  getRowId,
+  deleteBatch,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-    // TODO need to pass these in from the column spec
-    method: false,
-    headers: false,
-    body: false,
-  });
+  const [columnVisibility, setColumnVisibility] =
+    useState<VisibilityState>(visibility);
   const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
@@ -62,6 +63,7 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    getRowId: getRowId,
     state: {
       sorting,
       columnFilters,
@@ -69,6 +71,17 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   });
+
+  const handleDeleteBatch = async () => {
+    try {
+      await deleteBatch(
+        table.getFilteredSelectedRowModel().rows.map((row) => row.id)
+      );
+      table.resetRowSelection();
+    } catch (err) {
+      console.error("Failed to delete:", err);
+    }
+  };
 
   return (
     <div className="w-full">
@@ -158,14 +171,16 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 pt-4">
-        {table.getFilteredSelectedRowModel().rows.length > 0 && (
-          <div className="flex-1 text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
+      <div className="flex items-center justify-between space-x-2 pt-4">
+        {table.getFilteredSelectedRowModel().rows.length > 0 ? (
+          <Button variant="destructive" size="sm" onClick={handleDeleteBatch}>
+            Delete {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length}
+          </Button>
+        ) : (
+          <div></div>
         )}
-        <div className="space-x-2">
+        <div className="flex space-x-2">
           <Button
             variant="outline"
             size="sm"
