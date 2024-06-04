@@ -17,12 +17,12 @@ TODO: test pagination works
 
 TODO: stats on how many crons sent
 
-TODO: display send errors
-
 TODO: drop-down to select daily/weekly/monthly etc
 
 TODO: visual refresh
 
 TODO: add tests
+
+TODO: have a better form input for "every day" etc
 
 TODO: clearer naming between webhooks and crons, their usage isn't always clear
