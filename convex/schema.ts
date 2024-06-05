@@ -1,7 +1,10 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { tables as authTables } from "@xixixao/convex-auth/server";
 
 export default defineSchema({
+  ...authTables,
+
   // Cronvex table.
   crons: defineTable({
     // Fully qualified function name.
