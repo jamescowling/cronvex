@@ -35,16 +35,8 @@ export default defineSchema({
     cron: v.optional(v.id("crons")),
   }),
 
-  // Web logs from incoming POST requests.
-  inbound_logs: defineTable({
-    url: v.string(),
-    method: v.string(),
-    headers: v.string(),
-    body: v.string(),
-  }),
-
   // Web logs from outgoing requests.
-  outbound_logs: defineTable({
+  weblogs: defineTable({
     url: v.string(),
     method: v.string(),
     headers: v.optional(v.string()),

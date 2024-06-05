@@ -1,5 +1,4 @@
-import { InboundLogs } from "./components/InboundLogs";
-import { OutboundLogs } from "./components/OutboundLogs";
+import { Logs } from "./components/Logs";
 import { Crons } from "./components/Crons";
 import { Button } from "./components/ui/button";
 import { ThemeProvider } from "./components/ThemeProvider";
@@ -7,16 +6,6 @@ import { ModeToggle } from "./components/ModeToggle";
 import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { SignIn } from "./components/SignIn";
 import { SignOut } from "./components/SignOut";
-
-export function webhookUrl() {
-  var backendUrl = import.meta.env.VITE_CONVEX_URL as string;
-  if (backendUrl.endsWith(".convex.cloud")) {
-    backendUrl = backendUrl.replace(".convex.cloud", ".convex.site");
-  }
-  // TODO: would be nice to use a constant for both here and http.ts.
-  backendUrl += "/log";
-  return backendUrl;
-}
 
 export default function App() {
   return (
@@ -55,8 +44,7 @@ function Content() {
         </div>
       </div>
       <Crons />
-      <OutboundLogs />
-      <InboundLogs />
+      <Logs />
     </main>
   );
 }

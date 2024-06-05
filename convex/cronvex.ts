@@ -168,7 +168,7 @@ export const fetcher = internalAction({
       }
     }
 
-    await ctx.runMutation(internal.weblogs.logOutbound, {
+    await ctx.runMutation(internal.cronvex.log, {
       url,
       method,
       headers,
@@ -176,5 +176,32 @@ export const fetcher = internalAction({
       status: responseStatus,
       response: responseBody,
     });
+  },
+});
+
+export const log = internalMutation({
+  args: {
+    url: v.string(),
+    method: v.string(),
+    headers: v.optional(v.string()),
+    body: v.optional(v.string()),
+    status: v.float64(),
+    response: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.insert("weblogs", {
+      url: args.url,
+      method: args.method,
+      headers: args.headers,
+      body: args.body,
+      status: args.status,
+      response: args.response,
+    });
+  },
+});
+
+export const tailLogs = query({
+  handler: async (ctx) => {
+    return await ctx.db.query("weblogs").order("desc").take(10);
   },
 });

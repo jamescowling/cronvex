@@ -9,17 +9,16 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "./ui/table";
-import { webhookUrl } from "@/App";
 
-export function InboundLogs() {
-  const logs = useQuery(api.weblogs.tailInbound) ?? [];
+export function Logs() {
+  const logs = useQuery(api.cronvex.tailLogs) ?? [];
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Inbound web logs</CardTitle>
+        <CardTitle>Logs</CardTitle>
         <CardDescription>
-          Inbound http requests to the sample endpoint {webhookUrl()}.
+          Outbound http requests triggered by crons.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -31,6 +30,8 @@ export function InboundLogs() {
               <TableCell>Method</TableCell>
               <TableCell>Headers</TableCell>
               <TableCell>Body</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Response</TableCell>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -41,6 +42,8 @@ export function InboundLogs() {
                 <TableCell>{log.method}</TableCell>
                 <TableCell>{log.headers}</TableCell>
                 <TableCell>{log.body}</TableCell>
+                <TableCell>{log.status}</TableCell>
+                <TableCell>{log.response}</TableCell>
               </TableRow>
             ))}
           </TableBody>

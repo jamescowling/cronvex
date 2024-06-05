@@ -1,4 +1,22 @@
 // Implementation of crons in userspace.
+//
+// Crons can be registered at runtime via the `cron` or `interval` functions. If
+// you'd like to statically define cronjobs like in the built-in `crons.ts`
+// Convex feature you can do so via an init script that idempotently registers a
+// cron with a given name. e.g., in an `init.ts` file that gets run on every
+// deploy via `convex dev --run init`:
+//
+// if ((await getByName(ctx, "daily")) == null) {
+//   await cronWithName(
+//     ctx,
+//     "daily",
+//     "0 0 * * *",
+//     internal.whatever.myFunctionName,
+//     {
+//       message: "daily cron",
+//     }
+//   );
+// }
 
 import {
   FunctionReference,
@@ -72,7 +90,7 @@ export async function cron<FuncRef extends SchedulableFunctionReference>(
  * @returns The ID of the cron job.
  */
 export async function cronWithName<
-  FuncRef extends SchedulableFunctionReference
+  FuncRef extends SchedulableFunctionReference,
 >(
   ctx: MutationCtx,
   name: string,
@@ -131,7 +149,7 @@ export async function interval<FuncRef extends SchedulableFunctionReference>(
  * @returns The ID of the cron job.
  */
 export async function intervalWithName<
-  FuncRef extends SchedulableFunctionReference
+  FuncRef extends SchedulableFunctionReference,
 >(
   ctx: MutationCtx,
   name: string,
