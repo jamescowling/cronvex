@@ -15,7 +15,6 @@ export default function App() {
         <SignIn />
       </Unauthenticated>
       <Authenticated>
-        <SignOut />
         <Content />
       </Authenticated>
     </ThemeProvider>
@@ -41,6 +40,7 @@ function Content() {
             </Button>
           </a>
           <ModeToggle />
+          <SignOut />
         </div>
       </div>
       <Crons />
