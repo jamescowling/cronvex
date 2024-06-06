@@ -29,20 +29,20 @@ export function Profile() {
   );
 }
 
-function SignIn() {
+export function SignIn() {
   const { signIn } = useAuthActions();
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="default" className="gap-2">
-          Log in / Sign up
+          Sign in
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-2xl">Log in / Sign up</DialogTitle>
+          <DialogTitle className="text-2xl">Sign in</DialogTitle>
           <DialogDescription>
-            Enter your email for an access code to log in immediately.
+            Enter your email for an access code to sign in immediately.
           </DialogDescription>
         </DialogHeader>
 

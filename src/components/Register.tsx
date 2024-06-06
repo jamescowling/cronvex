@@ -1,7 +1,13 @@
-import { useMutation } from "convex/react";
+import {
+  Authenticated,
+  Unauthenticated,
+  useConvexAuth,
+  useMutation,
+} from "convex/react";
 import { api } from "../../convex/_generated/api";
 
 import { FormEvent, useCallback, useState } from "react";
+import { SignIn } from "./Profile";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -61,6 +67,8 @@ export function Register() {
     },
     [formData, registerJob]
   );
+
+  const { isAuthenticated } = useConvexAuth();
 
   return (
     <div>
@@ -169,16 +177,28 @@ export function Register() {
             </div>
 
             <DialogFooter className="grid grid-cols-4 items-center gap-4">
-              <div className="text-left text-red-500 col-span-3">{error}</div>
-              <Button
-                type="submit"
-                className="col-span-1"
-                disabled={
-                  !formData.url || !formData.cronspec || !formData.method
-                }
-              >
-                Register cron
-              </Button>
+              <div className="text-left text-red-500 col-span-3">
+                {isAuthenticated
+                  ? error
+                  : "Must be signed in to register a cron."}
+              </div>
+              <Authenticated>
+                <Button
+                  type="submit"
+                  className="col-span-1"
+                  disabled={
+                    !formData.url ||
+                    !formData.cronspec ||
+                    !formData.method ||
+                    !isAuthenticated
+                  }
+                >
+                  Register cron
+                </Button>
+              </Authenticated>
+              <Unauthenticated>
+                <SignIn />
+              </Unauthenticated>
             </DialogFooter>
           </form>
         </DialogContent>
