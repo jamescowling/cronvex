@@ -1,18 +1,5 @@
 "use client";
 
-import { ChevronDownIcon } from "@radix-ui/react-icons";
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -29,6 +16,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {
