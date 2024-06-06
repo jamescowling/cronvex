@@ -9,8 +9,9 @@ import {
   internalAction,
 } from "./_generated/server";
 import { internal } from "./_generated/api";
-import { cron, list } from "./cronlib";
+import { cron } from "./cronlib";
 import { Id } from "./_generated/dataModel";
+import { auth } from "./auth";
 
 export const registerCron = mutation({
   args: {
@@ -22,10 +23,15 @@ export const registerCron = mutation({
     body: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (userId == null) {
+      throw new Error("User not found");
+    }
     if (args.headers) {
       new Headers(JSON.parse(args.headers)); // validate headers
     }
     const webhookId = await ctx.db.insert("webhooks", {
+      userId,
       url: args.url,
       name: args.name,
       method: args.method,
@@ -40,14 +46,7 @@ export const registerCron = mutation({
         id: webhookId,
       }
     );
-    await ctx.db.patch(webhookId, { cron: cronId });
-  },
-});
-
-// List all the crons.
-export const listCrons = query({
-  handler: async (ctx) => {
-    return await list(ctx);
+    await ctx.db.patch(webhookId, { cronId });
   },
 });
 
@@ -57,16 +56,23 @@ export const deleteCrons = mutation({
     ids: v.array(v.id("webhooks")),
   },
   handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (userId == null) {
+      throw new Error("User not found");
+    }
     await Promise.all(
       args.ids.map(async (id) => {
         const webhook = await ctx.db.get(id);
         if (webhook == null) {
           throw new Error("Webhook not found");
         }
-        if (webhook.cron == null) {
+        if (webhook.userId !== userId) {
+          throw new Error("User not authorized to delete webhook");
+        }
+        if (webhook.cronId == null) {
           throw new Error("Webhook cron not found");
         }
-        await ctx.db.delete(webhook.cron);
+        await ctx.db.delete(webhook.cronId);
         await ctx.db.delete(id);
       })
     );
@@ -76,26 +82,32 @@ export const deleteCrons = mutation({
 type WebhookWithCronspec = {
   _id: Id<"webhooks">;
   _creationTime: number;
+  userId: Id<"users">;
   name?: string | undefined;
+  url: string;
   method: string;
   headers?: string | undefined;
   body?: string | undefined;
-  cron?: Id<"crons"> | undefined;
-  url: string;
+  cronId?: Id<"crons"> | undefined;
   cronspec?: string;
 };
 
 export const listWebhooks = query({
   handler: async (ctx) => {
+    const userId = await auth.getUserId(ctx);
+    if (userId == null) {
+      throw new Error("User not found");
+    }
     const webhooks: WebhookWithCronspec[] = await ctx.db
       .query("webhooks")
+      .withIndex("userId", (q) => q.eq("userId", userId))
       .collect();
     await Promise.all(
       webhooks.map(async (webhook) => {
-        if (webhook.cron == null) {
+        if (webhook.cronId == null) {
           throw new Error("Webhook cron not found");
         }
-        const cron = await ctx.db.get(webhook.cron);
+        const cron = await ctx.db.get(webhook.cronId);
         if (cron == null) {
           throw new Error("Cron not found");
         }
@@ -116,6 +128,7 @@ export const callWebhook = internalMutation({
       throw new Error("Webhook not found");
     }
     ctx.scheduler.runAfter(0, internal.cronvex.fetcher, {
+      userId: webhook.userId,
       url: webhook.url,
       method: webhook.method,
       headers: webhook.headers,
@@ -126,12 +139,13 @@ export const callWebhook = internalMutation({
 
 export const fetcher = internalAction({
   args: {
+    userId: v.id("users"),
     url: v.string(),
     method: v.string(),
     headers: v.optional(v.string()),
     body: v.optional(v.string()),
   },
-  handler: async (ctx, { url, method, headers, body }) => {
+  handler: async (ctx, { userId, url, method, headers, body }) => {
     const fetchOptions: RequestInit = {
       method,
     };
@@ -169,6 +183,7 @@ export const fetcher = internalAction({
     }
 
     await ctx.runMutation(internal.cronvex.log, {
+      userId,
       url,
       method,
       headers,
@@ -181,6 +196,7 @@ export const fetcher = internalAction({
 
 export const log = internalMutation({
   args: {
+    userId: v.id("users"),
     url: v.string(),
     method: v.string(),
     headers: v.optional(v.string()),
@@ -190,6 +206,7 @@ export const log = internalMutation({
   },
   handler: async (ctx, args) => {
     await ctx.db.insert("weblogs", {
+      userId: args.userId,
       url: args.url,
       method: args.method,
       headers: args.headers,
@@ -202,6 +219,14 @@ export const log = internalMutation({
 
 export const tailLogs = query({
   handler: async (ctx) => {
-    return await ctx.db.query("weblogs").order("desc").take(10);
+    const userId = await auth.getUserId(ctx);
+    if (userId == null) {
+      throw new Error("User not found");
+    }
+    return await ctx.db
+      .query("weblogs")
+      .withIndex("userId", (q) => q.eq("userId", userId))
+      .order("desc")
+      .take(10);
   },
 });

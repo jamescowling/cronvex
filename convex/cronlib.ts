@@ -260,13 +260,13 @@ async function scheduleCron(
 
   if (schedule.type === "interval") {
     const cronJobId = await ctx.db.insert("crons", {
-      function: functionName,
+      functionName,
       args,
       name,
       ms: schedule.ms,
     });
     console.log(
-      `Scheduling ${args.function}(${args.args}) every ${schedule.ms} ms`
+      `Scheduling cron with name ${args.name} and id ${cronJobId} to run ${functionName}(${JSON.stringify(args)}) every ${schedule.ms} ms`
     );
     const schedulerJobId = await ctx.scheduler.runAfter(
       schedule.ms,
@@ -280,11 +280,14 @@ async function scheduleCron(
   }
 
   const cronJobId = await ctx.db.insert("crons", {
-    function: functionName,
+    functionName,
     args,
     name,
     cronspec: schedule.cronspec,
   });
+  console.log(
+    `Scheduling cron with name ${args.name} and id ${cronJobId} to run ${functionName}(${JSON.stringify(args)}) on cronspec ${schedule.cronspec}`
+  );
   const schedulerJobId = await ctx.scheduler.runAt(
     nextScheduledDate(new Date(), schedule.cronspec),
     internal.cronlib.rescheduler,
@@ -331,7 +334,7 @@ export const rescheduler = internalMutation({
 
     // Execution job is the previous job used to actually do the work of the cron.
     const cronFunction = makeFunctionReference<"mutation" | "action">(
-      cronJob.function
+      cronJob.functionName
     );
     var stillRunning = false;
     if (cronJob.executionJobId) {
@@ -347,7 +350,7 @@ export const rescheduler = internalMutation({
     if (stillRunning) {
       console.log(`Cron ${cronJob._id} still running, skipping this run.`);
     } else {
-      console.log(`Running cron job ${cronJob._id}: ${cronJob.function}`);
+      console.log(`Running cron job ${cronJob._id}.`);
       await ctx.scheduler.runAfter(0, cronFunction, cronJob.args);
     }
 
