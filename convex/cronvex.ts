@@ -95,7 +95,7 @@ export const listJobs = query({
   handler: async (ctx) => {
     const userId = await auth.getUserId(ctx);
     if (userId == null) {
-      throw new Error("User not found");
+      return [];
     }
     const jobsWithCrons: JobWithCron[] = await ctx.db
       .query("jobs")
@@ -220,7 +220,7 @@ export const tailLogs = query({
   handler: async (ctx) => {
     const userId = await auth.getUserId(ctx);
     if (userId == null) {
-      throw new Error("User not found");
+      return [];
     }
     return await ctx.db
       .query("weblogs")

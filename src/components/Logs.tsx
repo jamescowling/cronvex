@@ -36,17 +36,25 @@ export function Logs() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {logs.map((log, index) => (
-              <TableRow key={index}>
-                <TableCell>{formatDate(log._creationTime)}</TableCell>
-                <TableCell>{log.url}</TableCell>
-                <TableCell>{log.method}</TableCell>
-                <TableCell>{log.headers}</TableCell>
-                <TableCell>{log.body}</TableCell>
-                <TableCell>{log.status}</TableCell>
-                <TableCell>{log.response}</TableCell>
+            {logs.length ? (
+              logs.map((log, index) => (
+                <TableRow key={index}>
+                  <TableCell>{formatDate(log._creationTime)}</TableCell>
+                  <TableCell>{log.url}</TableCell>
+                  <TableCell>{log.method}</TableCell>
+                  <TableCell>{log.headers}</TableCell>
+                  <TableCell>{log.body}</TableCell>
+                  <TableCell>{log.status}</TableCell>
+                  <TableCell>{log.response}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={7} className="h-24 text-center">
+                  No messages sent.
+                </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </CardContent>
