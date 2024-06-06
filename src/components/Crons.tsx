@@ -1,6 +1,7 @@
 import { Id } from "convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { JobWithCron } from "../../convex/cronvex";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { CaretSortIcon } from "@radix-ui/react-icons";
@@ -16,20 +17,7 @@ import {
   CardTitle,
 } from "./ui/card";
 
-// TODO: remove duplication
-export type WebhookWithCronspec = {
-  _id: Id<"webhooks">;
-  _creationTime: number;
-  name?: string | undefined;
-  method: string;
-  headers?: string | undefined;
-  body?: string | undefined;
-  cron?: Id<"crons"> | undefined;
-  url: string;
-  cronspec?: string;
-};
-
-const columns: ColumnDef<WebhookWithCronspec>[] = [
+const columns: ColumnDef<JobWithCron>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -87,15 +75,15 @@ const columns: ColumnDef<WebhookWithCronspec>[] = [
 ];
 
 export function Crons() {
-  const crons = useQuery(api.cronvex.listWebhooks) ?? [];
-  const deleteCrons = useMutation(api.cronvex.deleteCrons);
+  const jobs = useQuery(api.cronvex.listJobs) ?? [];
+  const deleteJobs = useMutation(api.cronvex.deleteJobs);
 
-  function getRowId(row: WebhookWithCronspec): string {
-    return (row as WebhookWithCronspec)._id;
+  function getRowId(row: JobWithCron): string {
+    return (row as JobWithCron)._id;
   }
 
   async function deleteBatch(ids: string[]) {
-    await deleteCrons({ ids: ids as Id<"webhooks">[] });
+    await deleteJobs({ ids: ids as Id<"jobs">[] });
   }
 
   return (
@@ -109,7 +97,7 @@ export function Crons() {
           <Register />
           <DataTable
             columns={columns}
-            data={crons}
+            data={jobs}
             visibility={{
               method: false,
               headers: false,

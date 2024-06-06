@@ -28,7 +28,7 @@ export function Register() {
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
-  const registerCron = useMutation(api.cronvex.registerCron);
+  const registerJob = useMutation(api.cronvex.registerJob);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -44,7 +44,7 @@ export function Register() {
       setError(null);
 
       try {
-        await registerCron(formData);
+        await registerJob(formData);
         setFormData({
           url: "",
           cronspec: "",
@@ -59,7 +59,7 @@ export function Register() {
         console.error("Failed to register cron:", err);
       }
     },
-    [formData, registerCron]
+    [formData, registerJob]
   );
 
   return (

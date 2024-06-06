@@ -5,7 +5,7 @@ import { tables as authTables } from "@xixixao/convex-auth/server";
 export default defineSchema({
   ...authTables,
 
-  // Cronvex table.
+  // Userspace crons table.
   crons: defineTable({
     name: v.optional(v.string()), // optional cron name
     functionName: v.string(), // fully qualified function name
@@ -19,8 +19,9 @@ export default defineSchema({
     executionJobId: v.optional(v.id("_scheduled_functions")),
   }).index("name", ["name"]),
 
-  // Outgoing webhook requests to send.
-  webhooks: defineTable({
+  // Registered http request-sending jobs. Each is associated with an entry in the
+  // crons table which is the underlying scheduler for the job.
+  jobs: defineTable({
     userId: v.id("users"),
     name: v.optional(v.string()),
     url: v.string(),

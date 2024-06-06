@@ -1,5 +1,5 @@
-// Main service code for Cronvex which users userspace crons to schedule
-// webhooks.
+// Main service code for Cronvex which users userspace crons to send recurring
+// http requests on a cron schedule.
 
 import { v } from "convex/values";
 import {
@@ -13,7 +13,7 @@ import { cron } from "./cronlib";
 import { Id } from "./_generated/dataModel";
 import { auth } from "./auth";
 
-export const registerCron = mutation({
+export const registerJob = mutation({
   args: {
     url: v.string(),
     cronspec: v.string(),
@@ -30,7 +30,7 @@ export const registerCron = mutation({
     if (args.headers) {
       new Headers(JSON.parse(args.headers)); // validate headers
     }
-    const webhookId = await ctx.db.insert("webhooks", {
+    const jobId = await ctx.db.insert("jobs", {
       userId,
       url: args.url,
       name: args.name,
@@ -43,17 +43,16 @@ export const registerCron = mutation({
       args.cronspec,
       internal.cronvex.callWebhook,
       {
-        id: webhookId,
+        id: jobId,
       }
     );
-    await ctx.db.patch(webhookId, { cronId });
+    await ctx.db.patch(jobId, { cronId });
   },
 });
 
-// TODO this naming is confusing vs webhooks.
-export const deleteCrons = mutation({
+export const deleteJobs = mutation({
   args: {
-    ids: v.array(v.id("webhooks")),
+    ids: v.array(v.id("jobs")),
   },
   handler: async (ctx, args) => {
     const userId = await auth.getUserId(ctx);
@@ -62,25 +61,25 @@ export const deleteCrons = mutation({
     }
     await Promise.all(
       args.ids.map(async (id) => {
-        const webhook = await ctx.db.get(id);
-        if (webhook == null) {
-          throw new Error("Webhook not found");
+        const job = await ctx.db.get(id);
+        if (job == null) {
+          throw new Error("Job not found");
         }
-        if (webhook.userId !== userId) {
-          throw new Error("User not authorized to delete webhook");
+        if (job.userId !== userId) {
+          throw new Error("User not authorized to delete job");
         }
-        if (webhook.cronId == null) {
-          throw new Error("Webhook cron not found");
+        if (job.cronId == null) {
+          throw new Error("Cron not found");
         }
-        await ctx.db.delete(webhook.cronId);
+        await ctx.db.delete(job.cronId);
         await ctx.db.delete(id);
       })
     );
   },
 });
 
-type WebhookWithCronspec = {
-  _id: Id<"webhooks">;
+export type JobWithCron = {
+  _id: Id<"jobs">;
   _creationTime: number;
   userId: Id<"users">;
   name?: string | undefined;
@@ -92,47 +91,47 @@ type WebhookWithCronspec = {
   cronspec?: string;
 };
 
-export const listWebhooks = query({
+export const listJobs = query({
   handler: async (ctx) => {
     const userId = await auth.getUserId(ctx);
     if (userId == null) {
       throw new Error("User not found");
     }
-    const webhooks: WebhookWithCronspec[] = await ctx.db
-      .query("webhooks")
+    const jobsWithCrons: JobWithCron[] = await ctx.db
+      .query("jobs")
       .withIndex("userId", (q) => q.eq("userId", userId))
       .collect();
     await Promise.all(
-      webhooks.map(async (webhook) => {
-        if (webhook.cronId == null) {
-          throw new Error("Webhook cron not found");
+      jobsWithCrons.map(async (jobWithCron) => {
+        if (jobWithCron.cronId == null) {
+          throw new Error("Cron not found");
         }
-        const cron = await ctx.db.get(webhook.cronId);
+        const cron = await ctx.db.get(jobWithCron.cronId);
         if (cron == null) {
           throw new Error("Cron not found");
         }
-        webhook.cronspec = cron.cronspec;
+        jobWithCron.cronspec = cron.cronspec;
       })
     );
-    return webhooks;
+    return jobsWithCrons;
   },
 });
 
 export const callWebhook = internalMutation({
   args: {
-    id: v.id("webhooks"),
+    id: v.id("jobs"),
   },
   handler: async (ctx, args) => {
-    const webhook = await ctx.db.get(args.id);
-    if (webhook == null) {
-      throw new Error("Webhook not found");
+    const job = await ctx.db.get(args.id);
+    if (job == null) {
+      throw new Error("Job not found");
     }
     ctx.scheduler.runAfter(0, internal.cronvex.fetcher, {
-      userId: webhook.userId,
-      url: webhook.url,
-      method: webhook.method,
-      headers: webhook.headers,
-      body: webhook.body,
+      userId: job.userId,
+      url: job.url,
+      method: job.method,
+      headers: job.headers,
+      body: job.body,
     });
   },
 });
