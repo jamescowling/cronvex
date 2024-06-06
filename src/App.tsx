@@ -4,13 +4,14 @@ import { ModeToggle } from "./components/ModeToggle";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { Button } from "./components/ui/button";
 import { Profile } from "./components/Profile";
+import { Footer } from "./components/Footer";
 
 export default function App() {
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
       <main className="container flex flex-col gap-8">
         <div className="flex justify-between items-center">
-          <h1 className="text-4xl font-extrabold font-mono mt-8">$ cronvex_</h1>
+          <h1 className="text-4xl font-bold mt-8">⏲️ Cronvex</h1>
           <div className="flex gap-2 mt-8">
             <a href="https://github.com/JamesCowling/cronvex">
               <Button variant="outline" className="gap-2">
@@ -28,8 +29,26 @@ export default function App() {
             <Profile />
           </div>
         </div>
+        <div className="text-sm text-muted-foreground px-2">
+          <p>Send periodic http requests to webhooks on a given schedule.</p>
+          <p>
+            Convex is free and was built as a demonstration of scheduled jobs on{" "}
+            <a href="https://convex.dev" className="font-bold">
+              Convex
+            </a>
+            .
+          </p>
+          <p>
+            You're welcome to use the{" "}
+            <a href="https://convex.dev" className="font-bold">
+              Cronvex source
+            </a>{" "}
+            in any way you like.
+          </p>
+        </div>
         <Crons />
         <Logs />
+        <Footer />
       </main>
     </ThemeProvider>
   );
