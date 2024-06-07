@@ -14,6 +14,8 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as ResendOTP from "../ResendOTP.js";
+import type * as VerificationCodeEmail from "../VerificationCodeEmail.js";
 import type * as auth from "../auth.js";
 import type * as common from "../common.js";
 import type * as cronlib from "../cronlib.js";
@@ -30,6 +32,8 @@ import type * as init from "../init.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  ResendOTP: typeof ResendOTP;
+  VerificationCodeEmail: typeof VerificationCodeEmail;
   auth: typeof auth;
   common: typeof common;
   cronlib: typeof cronlib;
