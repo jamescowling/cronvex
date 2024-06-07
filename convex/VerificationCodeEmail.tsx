@@ -8,6 +8,10 @@ import {
   Text,
 } from "@react-email/components";
 
+// TODO: will this fix Vercel complaining?
+// eslint-disable-next-line no-unused-vars
+import * as React from "react";
+
 export function VerificationCodeEmail({
   code,
   expires,
