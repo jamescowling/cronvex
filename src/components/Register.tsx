@@ -178,9 +178,7 @@ export function Register() {
 
             <DialogFooter className="grid grid-cols-4 items-center gap-4">
               <div className="text-left text-red-500 col-span-3">
-                {isAuthenticated
-                  ? error
-                  : "Must be signed in to register a cron."}
+                {isAuthenticated ? error : "Must be signed in to add a cron."}
               </div>
               <Authenticated>
                 <Button

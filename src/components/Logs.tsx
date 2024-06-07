@@ -17,7 +17,7 @@ export function Logs() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Logs</CardTitle>
+        <CardTitle className="text-lg">Logs</CardTitle>
         <CardDescription>
           Outbound http requests triggered by crons.
         </CardDescription>

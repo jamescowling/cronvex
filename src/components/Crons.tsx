@@ -90,7 +90,7 @@ export function Crons() {
     <div className="w-full">
       <Card>
         <CardHeader>
-          <CardTitle>Crons</CardTitle>
+          <CardTitle className="text-lg">Crons</CardTitle>
           <CardDescription>Currently registered cron jobs.</CardDescription>
         </CardHeader>
         <CardContent>

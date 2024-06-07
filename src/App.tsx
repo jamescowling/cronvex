@@ -58,7 +58,10 @@ function Header() {
         </p>
         <p>
           You're welcome to use the{" "}
-          <a href="https://convex.dev" className="font-bold">
+          <a
+            href="https://github.com/JamesCowling/cronvex"
+            className="font-bold"
+          >
             Cronvex source
           </a>{" "}
           in any way you like.
