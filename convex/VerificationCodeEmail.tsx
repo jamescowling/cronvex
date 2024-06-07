@@ -7,9 +7,7 @@ import {
   Tailwind,
   Text,
 } from "@react-email/components";
-
-// TODO: will this fix Vercel complaining?
-// eslint-disable-next-line no-unused-vars
+// @ts-ignore
 import * as React from "react";
 
 export function VerificationCodeEmail({
