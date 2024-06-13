@@ -7,7 +7,6 @@ import {
   Tailwind,
   Text,
 } from "@react-email/components";
-// @ts-ignore
 import * as React from "react";
 
 export function VerificationCodeEmail({
