@@ -35,7 +35,7 @@ export function VerificationCodeEmail({
             </Text>
             <Text>
               (This code is valid for{" "}
-              {Math.floor((+expires - Date.now()) / (60 * 1000))} minutes)
+              {Math.floor((+expires - Date.now()) / (60 * 60 * 1000))} hours)
             </Text>
           </Section>
         </Container>

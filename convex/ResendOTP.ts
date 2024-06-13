@@ -4,8 +4,6 @@ import { Resend as ResendAPI } from "resend";
 import { VerificationCodeEmail } from "./VerificationCodeEmail";
 import { alphabet, generateRandomString } from "oslo/crypto";
 
-// TODO: send both a magic link and an OTP in one email
-
 export const ResendOTP = Resend({
   id: "resend-otp",
   async generateVerificationToken() {
@@ -22,12 +20,10 @@ export const ResendOTP = Resend({
       from: "Cronvex <onboarding@resend.dev>",
       to: [email],
       subject: `Sign in to Cronvex`,
-      // TODO: where is expires getting set?
       react: VerificationCodeEmail({ code: token, expires }),
     });
 
     if (error) {
-      console.log("Error sending verification code email", error);
       throw new ConvexError("Could not send verification code email");
     }
   },
