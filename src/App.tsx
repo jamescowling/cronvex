@@ -48,7 +48,7 @@ function Header() {
       </div>
 
       <div className="text-sm text-muted-foreground px-2">
-        <p>Send periodic http requests to webhooks on a given schedule.</p>
+        <p>Send http requests to webhooks on a periodic schedule.</p>
         <p>
           Convex is free and was built as a demonstration of scheduled jobs on{" "}
           <a href="https://convex.dev" className="font-bold">

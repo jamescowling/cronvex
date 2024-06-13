@@ -20,6 +20,7 @@ import {
 } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { Textarea } from "./ui/textarea";
 
 export function Register() {
   const [formData, setFormData] = useState({
@@ -36,7 +37,9 @@ export function Register() {
 
   const registerJob = useMutation(api.cronvex.registerJob);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -150,13 +153,14 @@ export function Register() {
                   <Label htmlFor="headers" className="text-right">
                     Headers (optional)
                   </Label>
-                  <Input
+                  <Textarea
                     id="headers"
                     name="headers"
                     value={formData.headers}
                     onChange={handleChange}
-                    placeholder='{ "Content-Type": "application/json", ... }'
+                    placeholder={`"Content-Type": "application/json"`}
                     className="col-span-3"
+                    rows={2}
                   />
                 </div>
 
@@ -164,13 +168,14 @@ export function Register() {
                   <Label htmlFor="body" className="text-right">
                     Body (optional)
                   </Label>
-                  <Input
+                  <Textarea
                     id="body"
                     name="body"
                     value={formData.body}
                     onChange={handleChange}
-                    placeholder='{ "author": "User 123", "body": "Hello world" }'
+                    placeholder={`"author": "User 123",\n"body": "Hello world"`}
                     className="col-span-3"
+                    rows={3}
                   />
                 </div>
               </div>

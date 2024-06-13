@@ -21,3 +21,5 @@ TODO: visual refresh
 TODO: add tests
 
 TODO: have a better form input for "every day" etc
+
+TODO: make `body` field multiline
