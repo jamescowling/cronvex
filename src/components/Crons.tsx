@@ -79,7 +79,7 @@ export function Crons() {
   const deleteJobs = useMutation(api.cronvex.deleteJobs);
 
   function getRowId(row: JobWithCron): string {
-    return (row as JobWithCron)._id;
+    return row._id;
   }
 
   async function deleteBatch(ids: string[]) {

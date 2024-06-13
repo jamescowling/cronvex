@@ -126,7 +126,7 @@ export const callWebhook = internalMutation({
     if (job == null) {
       throw new Error("Job not found");
     }
-    ctx.scheduler.runAfter(0, internal.cronvex.fetcher, {
+    await ctx.scheduler.runAfter(0, internal.cronvex.fetcher, {
       userId: job.userId,
       url: job.url,
       method: job.method,

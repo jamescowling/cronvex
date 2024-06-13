@@ -19,7 +19,6 @@
 // }
 
 import {
-  FunctionReference,
   OptionalRestArgs,
   SchedulableFunctionReference,
   getFunctionName,
@@ -56,8 +55,8 @@ import parser from "cron-parser";
  *
  * @param ctx - Caller mutation context.
  * @param cronspec - Cron string like `"15 7 * * *"` (Every day at 7:15 UTC)
- * @param functionReference - A {@link FunctionReference} for the function
- * to schedule.
+ * @param functionReference - A {@link SchedulableFunctionReference} for the
+ * function to schedule.
  * @param args - The arguments to the function.
  * @returns The ID of the cron job.
  */
@@ -210,7 +209,7 @@ export async function del(ctx: MutationCtx, cronJobId: Id<"crons">) {
   if (!cronJob.schedulerJobId) {
     throw new Error(`Cron job ${cronJobId} not scheduled`);
   }
-  ctx.scheduler.cancel(cronJob.schedulerJobId);
+  await ctx.scheduler.cancel(cronJob.schedulerJobId);
   if (cronJob.executionJobId) {
     await ctx.scheduler.cancel(cronJob.executionJobId);
   }
@@ -266,7 +265,7 @@ async function scheduleCron(
       ms: schedule.ms,
     });
     console.log(
-      `Scheduling cron with name ${args.name} and id ${cronJobId} to run ${functionName}(${JSON.stringify(args)}) every ${schedule.ms} ms`
+      `Scheduling cron with name ${name} and id ${cronJobId} to run ${functionName}(${JSON.stringify(args)}) every ${schedule.ms} ms`
     );
     const schedulerJobId = await ctx.scheduler.runAfter(
       schedule.ms,
@@ -286,7 +285,7 @@ async function scheduleCron(
     cronspec: schedule.cronspec,
   });
   console.log(
-    `Scheduling cron with name ${args.name} and id ${cronJobId} to run ${functionName}(${JSON.stringify(args)}) on cronspec ${schedule.cronspec}`
+    `Scheduling cron with name ${name} and id ${cronJobId} to run ${functionName}(${JSON.stringify(args)}) on cronspec ${schedule.cronspec}`
   );
   const schedulerJobId = await ctx.scheduler.runAt(
     nextScheduledDate(new Date(), schedule.cronspec),
@@ -336,7 +335,7 @@ export const rescheduler = internalMutation({
     const cronFunction = makeFunctionReference<"mutation" | "action">(
       cronJob.functionName
     );
-    var stillRunning = false;
+    let stillRunning = false;
     if (cronJob.executionJobId) {
       const executionJob = await ctx.db.system.get(cronJob.executionJobId);
       if (
@@ -390,7 +389,7 @@ export const rescheduler = internalMutation({
 
 // Calculate the next date to run a cron given the last time it was scheduled.
 function nextScheduledDate(prevDate: Date, cronspec: string) {
-  var options = {
+  const options = {
     currentDate: prevDate,
   };
   const interval = parser.parseExpression(cronspec, options);

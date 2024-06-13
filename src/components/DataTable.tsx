@@ -32,7 +32,7 @@ import { useState } from "react";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  visibility: {};
+  visibility: VisibilityState;
   getRowId: (row: TData) => string;
   deleteBatch: (ids: string[]) => Promise<void>;
 }
@@ -171,7 +171,11 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="flex items-center justify-between space-x-2 pt-4">
         {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-          <Button variant="destructive" size="sm" onClick={handleDeleteBatch}>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={void handleDeleteBatch}
+          >
             Delete {table.getFilteredSelectedRowModel().rows.length} of{" "}
             {table.getFilteredRowModel().rows.length}
           </Button>

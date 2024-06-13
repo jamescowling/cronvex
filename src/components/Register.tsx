@@ -81,7 +81,7 @@ export function Register() {
         </DialogTrigger>
 
         <DialogContent className="sm:max-w-[600px]">
-          <form onSubmit={handleRegisterCron}>
+          <form onSubmit={void handleRegisterCron}>
             <DialogHeader>
               <DialogTitle>Add Cron</DialogTitle>
               <DialogDescription>
