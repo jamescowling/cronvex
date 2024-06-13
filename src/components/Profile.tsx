@@ -1,5 +1,3 @@
-"use client";
-
 import { useAuthActions } from "@xixixao/convex-auth/react";
 import { Authenticated, Unauthenticated } from "convex/react";
 
