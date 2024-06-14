@@ -16,6 +16,6 @@ cleanup job for this.
 
 TODO: test pagination works
 
-TODO: visual refresh
-
 TODO: add tests
+
+TODO: timezone support
