@@ -11,12 +11,14 @@ import cronvexLogo from "/cronvex.svg";
 export default function App() {
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <main className="container flex flex-col gap-8">
-        <Header />
-        <Crons />
-        <Logs />
-        <Footer />
-      </main>
+      <div className="bg-secondary">
+        <main className="container flex flex-col gap-8">
+          <Header />
+          <Crons />
+          <Logs />
+          <Footer />
+        </main>
+      </div>
     </ThemeProvider>
   );
 }
