@@ -178,9 +178,9 @@ export function Register() {
               </DialogDescription>
             </DialogHeader>
 
-            <div className="grid gap-4 py-4">
+            <div className="space-y-6 py-6">
               <div className="space-y-4">
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 items-baseline gap-4">
                   <Label htmlFor="url" className="text-right">
                     URL
                   </Label>
@@ -189,16 +189,16 @@ export function Register() {
                     name="url"
                     value={formData.url}
                     onChange={handleChange}
-                    placeholder="https://honorable-panther-344.convex.site/log"
+                    placeholder="https://example.com/chat"
                     className="col-span-3"
                   />
                 </div>
 
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 items-baseline gap-4">
                   <Label className="text-right">Schedule</Label>
                   <Tabs
                     defaultValue={formData.scheduleType}
-                    className="w-[400px] rounded-lg border"
+                    className="col-span-3 rounded-lg border"
                     onValueChange={(value) =>
                       setFormData((prevFormData) => ({
                         ...prevFormData,
@@ -213,136 +213,126 @@ export function Register() {
                       <TabsTrigger value="cronly">Cron Expression</TabsTrigger>
                     </TabsList>
 
-                    <TabsContent
-                      value="hourly"
-                      className="flex flex-col p-4 gap-4"
-                    >
-                      <div className="flex items-center gap-4">
-                        <Label
-                          htmlFor="hourlyInterval"
-                          className="flex flex-row gap-4"
-                        >
-                          Every
-                        </Label>
-                        <Input
-                          className="w-16"
-                          type="number"
-                          id="hourlyInterval"
-                          name="hourlyInterval"
-                          value={formData.hourlyInterval}
-                          onChange={handleChange}
-                        />
-                        <div className="text-sm font-medium">hours </div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <Label
-                          htmlFor="hourlyOffset"
-                          className="flex flex-row gap-4"
-                        >
-                          at
-                        </Label>
-                        <Input
-                          className="w-16"
-                          type="number"
-                          id="hourlyOffset"
-                          name="hourlyOffset"
-                          value={formData.hourlyOffset}
-                          onChange={handleChange}
-                        />
-                        <div className="text-sm font-medium">
-                          minutes past the hour
-                        </div>
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent
-                      value="daily"
-                      className="flex flex-col p-4 gap-4"
-                    >
-                      <div className="flex flex-col gap-4">
-                        <Label>Every</Label>
-                        <div className="grid grid-cols-4">
-                          {days.map((day) => (
-                            <div
-                              className="flex items-center space-x-2"
-                              key={day}
-                            >
-                              <input
-                                className="peer h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-                                type="checkbox"
-                                id={day}
-                                name={day}
-                                checked={formData.dailyDays[day]}
-                                onChange={handleChange}
-                              />
-                              <label htmlFor={day} className="text-sm">
-                                {day.slice(0, 3)}
-                              </label>
+                    <div className="flex flex-col px-6 py-2">
+                      <TabsContent value="hourly">
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center gap-4">
+                            <Label htmlFor="hourlyInterval" className="flex">
+                              Every
+                            </Label>
+                            <Input
+                              className="w-16"
+                              type="number"
+                              id="hourlyInterval"
+                              name="hourlyInterval"
+                              value={formData.hourlyInterval}
+                              onChange={handleChange}
+                            />
+                            <div className="text-sm font-medium">hours</div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <Label htmlFor="hourlyOffset" className="flex">
+                              at
+                            </Label>
+                            <Input
+                              className="w-16"
+                              type="number"
+                              id="hourlyOffset"
+                              name="hourlyOffset"
+                              value={formData.hourlyOffset}
+                              onChange={handleChange}
+                            />
+                            <div className="text-sm font-medium">
+                              minutes past the hour
                             </div>
-                          ))}
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <Label htmlFor="dailyTime">at</Label>
-                        <Input
-                          className="w-auto"
-                          type="time"
-                          id="dailyTime"
-                          name="dailyTime"
-                          value={formData.dailyTime}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </TabsContent>
+                      </TabsContent>
 
-                    <TabsContent
-                      value="monthly"
-                      className="flex flex-col p-4 gap-4"
-                    >
-                      <div className="flex items-center gap-4">
-                        <Label htmlFor="monthlyDay">Day of month</Label>
-                        <Input
-                          className="w-16"
-                          type="number"
-                          id="monthlyDay"
-                          name="monthlyDay"
-                          value={formData.monthlyDay}
-                          onChange={handleChange}
-                        />
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <Label htmlFor="monthlyTime">Time</Label>
-                        <Input
-                          className="w-auto"
-                          type="time"
-                          id="monthlyTime"
-                          name="monthlyTime"
-                          value={formData.monthlyTime}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </TabsContent>
+                      <TabsContent value="daily">
+                        <div className="flex flex-col gap-4">
+                          <div className="flex flex-col gap-4">
+                            <Label>Every</Label>
+                            <div className="grid grid-cols-4 gap-2">
+                              {days.map((day) => (
+                                <div
+                                  className="flex items-center space-x-2"
+                                  key={day}
+                                >
+                                  <input
+                                    className="peer h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                                    type="checkbox"
+                                    id={day}
+                                    name={day}
+                                    checked={formData.dailyDays[day]}
+                                    onChange={handleChange}
+                                  />
+                                  <label htmlFor={day} className="text-sm">
+                                    {day.slice(0, 3)}
+                                  </label>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <Label htmlFor="dailyTime">at</Label>
+                            <Input
+                              className="w-auto"
+                              type="time"
+                              id="dailyTime"
+                              name="dailyTime"
+                              value={formData.dailyTime}
+                              onChange={handleChange}
+                            />
+                          </div>
+                        </div>
+                      </TabsContent>
 
-                    <TabsContent
-                      value="cronly"
-                      className="flex flex-col p-4 gap-4"
-                    >
-                      <div className="flex items-center gap-4">
-                        <Label htmlFor="cronspec">Cronspec</Label>
-                        <Input
-                          className="w-auto"
-                          id="cronspec"
-                          name="cronspec"
-                          value={formData.cronspec}
-                          onChange={handleChange}
-                          placeholder="* * * * *"
-                        />
-                      </div>
-                    </TabsContent>
+                      <TabsContent value="monthly">
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center gap-4">
+                            <Label htmlFor="monthlyDay">Day of month</Label>
+                            <Input
+                              className="w-16"
+                              type="number"
+                              id="monthlyDay"
+                              name="monthlyDay"
+                              value={formData.monthlyDay}
+                              onChange={handleChange}
+                            />
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <Label htmlFor="monthlyTime">Time</Label>
+                            <Input
+                              className="w-auto"
+                              type="time"
+                              id="monthlyTime"
+                              name="monthlyTime"
+                              value={formData.monthlyTime}
+                              onChange={handleChange}
+                            />
+                          </div>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="cronly">
+                        <div className="flex items-center gap-4">
+                          <Label htmlFor="cronspec">Cronspec</Label>
+                          <Input
+                            className="w-auto"
+                            id="cronspec"
+                            name="cronspec"
+                            value={formData.cronspec}
+                            onChange={handleChange}
+                            placeholder="* * * * *"
+                          />
+                        </div>
+                      </TabsContent>
+                    </div>
                   </Tabs>
                 </div>
 
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 items-baseline gap-4">
                   <Label htmlFor="name" className="text-right">
                     Name (optional)
                   </Label>
@@ -351,12 +341,12 @@ export function Register() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder="my cool cron"
+                    placeholder="my-annoying-chat-bot"
                     className="col-span-3"
                   />
                 </div>
 
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 items-baseline gap-4">
                   <Label htmlFor="method" className="text-right">
                     Method
                   </Label>
@@ -370,7 +360,7 @@ export function Register() {
                   />
                 </div>
 
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 items-baseline gap-4">
                   <Label htmlFor="headers" className="text-right">
                     Headers (optional)
                   </Label>
@@ -385,7 +375,7 @@ export function Register() {
                   />
                 </div>
 
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 items-baseline gap-4">
                   <Label htmlFor="body" className="text-right">
                     Body (optional)
                   </Label>
@@ -394,7 +384,7 @@ export function Register() {
                     name="body"
                     value={formData.body}
                     onChange={handleChange}
-                    placeholder={`"author": "User 123",\n"body": "Hello world"`}
+                    placeholder={`"author": "Mr. Roboto",\n"body": "Domo arigato!"`}
                     className="col-span-3"
                     rows={3}
                   />
