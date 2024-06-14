@@ -206,112 +206,138 @@ export function Register() {
                       }))
                     }
                   >
-                    <TabsList>
+                    <TabsList className="flex justify-between">
                       <TabsTrigger value="hourly">Hourly</TabsTrigger>
                       <TabsTrigger value="daily">Daily</TabsTrigger>
                       <TabsTrigger value="monthly">Monthly</TabsTrigger>
                       <TabsTrigger value="cronly">Cron Expression</TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="hourly">
-                      <div className="flex flex-row p-2 gap-4">
-                        <div>
-                          <Label htmlFor="hourlyInterval">Every</Label>
-                          <Input
-                            type="number"
-                            id="hourlyInterval"
-                            name="hourlyInterval"
-                            value={formData.hourlyInterval}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        hours at
-                        <div>
-                          <Input
-                            type="number"
-                            id="hourlyOffset"
-                            name="hourlyOffset"
-                            value={formData.hourlyOffset}
-                            onChange={handleChange}
-                          />
-                          <Label htmlFor="hourlyOffset">
-                            minutes past the hour
-                          </Label>
+                    <TabsContent
+                      value="hourly"
+                      className="flex flex-col p-4 gap-4"
+                    >
+                      <div className="flex items-center gap-4">
+                        <Label
+                          htmlFor="hourlyInterval"
+                          className="flex flex-row gap-4"
+                        >
+                          Every
+                        </Label>
+                        <Input
+                          className="w-16"
+                          type="number"
+                          id="hourlyInterval"
+                          name="hourlyInterval"
+                          value={formData.hourlyInterval}
+                          onChange={handleChange}
+                        />
+                        <div className="text-sm font-medium">hours </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <Label
+                          htmlFor="hourlyOffset"
+                          className="flex flex-row gap-4"
+                        >
+                          at
+                        </Label>
+                        <Input
+                          className="w-16"
+                          type="number"
+                          id="hourlyOffset"
+                          name="hourlyOffset"
+                          value={formData.hourlyOffset}
+                          onChange={handleChange}
+                        />
+                        <div className="text-sm font-medium">
+                          minutes past the hour
                         </div>
                       </div>
                     </TabsContent>
 
-                    <TabsContent value="daily">
-                      <div className="flex flex-row p-2 gap-4">
-                        <div>
-                          <Label>Days</Label>
-                          <div className="columns-3">
-                            {days.map((day) => (
-                              <div
-                                className="flex items-center space-x-2"
-                                key={day}
-                              >
-                                <label htmlFor={day} className="text-sm">
-                                  <input
-                                    type="checkbox"
-                                    id={day}
-                                    name={day}
-                                    checked={formData.dailyDays[day]}
-                                    onChange={handleChange}
-                                  />
-                                  {day}
-                                </label>
-                              </div>
-                            ))}
-                          </div>
+                    <TabsContent
+                      value="daily"
+                      className="flex flex-col p-4 gap-4"
+                    >
+                      <div className="flex flex-col gap-4">
+                        <Label>Every</Label>
+                        <div className="grid grid-cols-4">
+                          {days.map((day) => (
+                            <div
+                              className="flex items-center space-x-2"
+                              key={day}
+                            >
+                              <input
+                                className="peer h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                                type="checkbox"
+                                id={day}
+                                name={day}
+                                checked={formData.dailyDays[day]}
+                                onChange={handleChange}
+                              />
+                              <label htmlFor={day} className="text-sm">
+                                {day.slice(0, 3)}
+                              </label>
+                            </div>
+                          ))}
                         </div>
-                        <div>
-                          <Label htmlFor="dailyTime">Time</Label>
-                          <Input
-                            type="time"
-                            id="dailyTime"
-                            name="dailyTime"
-                            value={formData.dailyTime}
-                            onChange={handleChange}
-                          />
-                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <Label htmlFor="dailyTime">at</Label>
+                        <Input
+                          className="w-auto"
+                          type="time"
+                          id="dailyTime"
+                          name="dailyTime"
+                          value={formData.dailyTime}
+                          onChange={handleChange}
+                        />
                       </div>
                     </TabsContent>
 
-                    <TabsContent value="monthly">
-                      <div className="flex flex-row p-2 gap-4">
-                        <div>
-                          <Label htmlFor="monthlyDay">Day of month</Label>
-                          <Input
-                            type="number"
-                            id="monthlyDay"
-                            name="monthlyDay"
-                            value={formData.monthlyDay}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="monthlyTime">Time</Label>
-                          <Input
-                            type="time"
-                            id="monthlyTime"
-                            name="monthlyTime"
-                            value={formData.monthlyTime}
-                            onChange={handleChange}
-                          />
-                        </div>
+                    <TabsContent
+                      value="monthly"
+                      className="flex flex-col p-4 gap-4"
+                    >
+                      <div className="flex items-center gap-4">
+                        <Label htmlFor="monthlyDay">Day of month</Label>
+                        <Input
+                          className="w-16"
+                          type="number"
+                          id="monthlyDay"
+                          name="monthlyDay"
+                          value={formData.monthlyDay}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <Label htmlFor="monthlyTime">Time</Label>
+                        <Input
+                          className="w-auto"
+                          type="time"
+                          id="monthlyTime"
+                          name="monthlyTime"
+                          value={formData.monthlyTime}
+                          onChange={handleChange}
+                        />
                       </div>
                     </TabsContent>
 
-                    <TabsContent value="cronly">
-                      <Label htmlFor="cronspec">Cronspec</Label>
-                      <Input
-                        id="cronspec"
-                        name="cronspec"
-                        value={formData.cronspec}
-                        onChange={handleChange}
-                        placeholder="* * * * *"
-                      />
+                    <TabsContent
+                      value="cronly"
+                      className="flex flex-col p-4 gap-4"
+                    >
+                      <div className="flex items-center gap-4">
+                        <Label htmlFor="cronspec">Cronspec</Label>
+                        <Input
+                          className="w-auto"
+                          id="cronspec"
+                          name="cronspec"
+                          value={formData.cronspec}
+                          onChange={handleChange}
+                          placeholder="* * * * *"
+                        />
+                      </div>
                     </TabsContent>
                   </Tabs>
                 </div>
