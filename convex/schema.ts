@@ -6,6 +6,10 @@ export default defineSchema({
   ...authTables,
 
   // Userspace crons table.
+  //
+  // This is designed to be independent to any specific Cronvex functionality
+  // since we plan on pulling this out into a helper library to be used
+  // elsewhere.
   crons: defineTable({
     name: v.optional(v.string()), // optional cron name
     functionName: v.string(), // fully qualified function name
@@ -23,6 +27,10 @@ export default defineSchema({
   // crons table which is the underlying scheduler for the job.
   jobs: defineTable({
     userId: v.id("users"),
+    // This name is unrelated to the name in the crons table. The crons table
+    // name is a unique name across all crons and used as an identifier whereas
+    // the name in this table is just a convenient per-user name for showing in
+    // their UI.
     name: v.optional(v.string()),
     url: v.string(),
     method: v.string(), // "GET", "POST", etc.
