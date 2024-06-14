@@ -112,6 +112,11 @@ export function Register() {
   const handleRegisterCron = useCallback(
     async (event: FormEvent) => {
       event.preventDefault();
+      if (formData.scheduleType === "cronly" && !formData.cronspec) {
+        setError("Cron spec is required when using Cron Expression");
+        return;
+      }
+
       setError(null);
 
       const [dailyHour, dailyMinute] = parseTime(formData.dailyTime);
@@ -216,7 +221,10 @@ export function Register() {
                       <TabsContent value="hourly">
                         <div className="flex flex-col gap-4">
                           <div className="flex items-center gap-4">
-                            <Label htmlFor="hourlyInterval" className="flex">
+                            <Label
+                              htmlFor="hourlyInterval"
+                              className="flex font-normal"
+                            >
                               Every
                             </Label>
                             <Input
@@ -229,10 +237,13 @@ export function Register() {
                               value={formData.hourlyInterval}
                               onChange={handleChange}
                             />
-                            <div className="text-sm font-medium">hour(s)</div>
+                            <div className="text-sm">hour(s)</div>
                           </div>
                           <div className="flex items-center gap-4">
-                            <Label htmlFor="hourlyOffset" className="flex">
+                            <Label
+                              htmlFor="hourlyOffset"
+                              className="flex  font-normal"
+                            >
                               at
                             </Label>
                             <Input
@@ -245,9 +256,7 @@ export function Register() {
                               value={formData.hourlyOffset}
                               onChange={handleChange}
                             />
-                            <div className="text-sm font-medium">
-                              minutes past the hour
-                            </div>
+                            <div className="text-sm">minutes past the hour</div>
                           </div>
                         </div>
                       </TabsContent>
@@ -255,7 +264,7 @@ export function Register() {
                       <TabsContent value="daily">
                         <div className="flex flex-col gap-4">
                           <div className="flex flex-col gap-4">
-                            <Label>Every</Label>
+                            <Label className="font-normal">Every</Label>
                             <div className="grid grid-cols-4 gap-2">
                               {days.map((day) => (
                                 <div
@@ -278,7 +287,9 @@ export function Register() {
                             </div>
                           </div>
                           <div className="flex items-center gap-4">
-                            <Label htmlFor="dailyTime">at</Label>
+                            <Label htmlFor="dailyTime" className="font-normal">
+                              at
+                            </Label>
                             <Input
                               className="w-auto"
                               type="time"
@@ -294,7 +305,9 @@ export function Register() {
                       <TabsContent value="monthly">
                         <div className="flex flex-col gap-4">
                           <div className="flex items-center gap-4">
-                            <Label htmlFor="monthlyDay">Day of month</Label>
+                            <Label htmlFor="monthlyDay" className="font-normal">
+                              Day of month
+                            </Label>
                             <Input
                               className="w-16"
                               type="number"
@@ -307,7 +320,12 @@ export function Register() {
                             />
                           </div>
                           <div className="flex items-center gap-4">
-                            <Label htmlFor="monthlyTime">Time</Label>
+                            <Label
+                              htmlFor="monthlyTime"
+                              className="font-normal"
+                            >
+                              Time
+                            </Label>
                             <Input
                               className="w-auto"
                               type="time"
@@ -322,7 +340,9 @@ export function Register() {
 
                       <TabsContent value="cronly">
                         <div className="flex items-center gap-4">
-                          <Label htmlFor="cronspec">Cron</Label>
+                          <Label htmlFor="cronspec" className="font-normal">
+                            Cron
+                          </Label>
                           <Input
                             className="w-auto"
                             id="cronspec"
@@ -330,6 +350,7 @@ export function Register() {
                             value={formData.cronspec}
                             onChange={handleChange}
                             placeholder="0 9 * * 1-5"
+                            required={formData.scheduleType === "cronly"}
                           />
                         </div>
                       </TabsContent>
@@ -417,9 +438,6 @@ export function Register() {
               </Authenticated>
               <Unauthenticated>
                 <SignIn />
-                <Button type="submit" className="col-span-1">
-                  Delete me
-                </Button>
               </Unauthenticated>
             </DialogFooter>
           </form>
