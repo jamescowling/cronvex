@@ -5,7 +5,7 @@ import {
   useMutation,
 } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 import { SignIn } from "./Profile";
 import { Button } from "./ui/button";
 import {
@@ -21,7 +21,6 @@ import { Textarea } from "./ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { Checkbox } from "./ui/checkbox";
 
 type Day =
   | "Monday"
@@ -223,12 +222,14 @@ export function Register() {
                             <Input
                               className="w-16"
                               type="number"
+                              min="1"
+                              max="24"
                               id="hourlyInterval"
                               name="hourlyInterval"
                               value={formData.hourlyInterval}
                               onChange={handleChange}
                             />
-                            <div className="text-sm font-medium">hours</div>
+                            <div className="text-sm font-medium">hour(s)</div>
                           </div>
                           <div className="flex items-center gap-4">
                             <Label htmlFor="hourlyOffset" className="flex">
@@ -237,6 +238,8 @@ export function Register() {
                             <Input
                               className="w-16"
                               type="number"
+                              min="0"
+                              max="59"
                               id="hourlyOffset"
                               name="hourlyOffset"
                               value={formData.hourlyOffset}
@@ -295,6 +298,8 @@ export function Register() {
                             <Input
                               className="w-16"
                               type="number"
+                              min="1"
+                              max="31"
                               id="monthlyDay"
                               name="monthlyDay"
                               value={formData.monthlyDay}
@@ -317,14 +322,14 @@ export function Register() {
 
                       <TabsContent value="cronly">
                         <div className="flex items-center gap-4">
-                          <Label htmlFor="cronspec">Cronspec</Label>
+                          <Label htmlFor="cronspec">Cron</Label>
                           <Input
                             className="w-auto"
                             id="cronspec"
                             name="cronspec"
                             value={formData.cronspec}
                             onChange={handleChange}
-                            placeholder="* * * * *"
+                            placeholder="0 9 * * 1-5"
                           />
                         </div>
                       </TabsContent>
