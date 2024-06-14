@@ -395,7 +395,7 @@ export function Register() {
                     name="headers"
                     value={formData.headers}
                     onChange={handleChange}
-                    placeholder={`"Content-Type": "application/json"`}
+                    placeholder={`{ "Content-Type": "application/json" }`}
                     className="col-span-3"
                     rows={2}
                   />
@@ -410,7 +410,7 @@ export function Register() {
                     name="body"
                     value={formData.body}
                     onChange={handleChange}
-                    placeholder={`"author": "Mr. Roboto",\n"body": "Domo arigato!"`}
+                    placeholder={`{ "author": "Mr. Roboto",\n"body": "Domo arigato!" }`}
                     className="col-span-3"
                     rows={3}
                   />
