@@ -83,7 +83,7 @@ export async function cron<FuncRef extends SchedulableFunctionReference>(
  * @param ctx - Caller mutation context.
  * @param name - Unique name for the cron job.
  * @param cronspec - Cron string like `"15 7 * * *"` (Every day at 7:15 UTC)
- * @param functionReference - A {@link FunctionReference} for the function
+ * @param functionReference - A {@link SchedulableFunctionReference} for the function
  * to schedule.
  * @param args - The arguments to the function.
  * @returns The ID of the cron job.
@@ -143,7 +143,8 @@ export async function interval<FuncRef extends SchedulableFunctionReference>(
  * @param ctx - Caller mutation context.
  * @param name - Unique name for the cron job.
  * @param ms - The time in ms between runs for this scheduled job, >= 1000.
- * @param func - A {@link FunctionReference} for the function to schedule.
+ * @param func - A {@link SchedulableFunctionReference} for the function to
+ * schedule.
  * @param args - Any arguments to the function.
  * @returns The ID of the cron job.
  */

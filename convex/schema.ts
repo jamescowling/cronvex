@@ -5,11 +5,9 @@ import { authTables } from "@xixixao/convex-auth/server";
 export default defineSchema({
   ...authTables,
 
-  // Userspace crons table.
-  //
-  // This is designed to be independent to any specific Cronvex functionality
-  // since we plan on pulling this out into a helper library to be used
-  // elsewhere.
+  // Userspace crons table. This is designed to be independent to any specific
+  // Cronvex functionality since we plan on pulling this out into a helper
+  // library to be used elsewhere.
   crons: defineTable({
     name: v.optional(v.string()), // optional cron name
     functionName: v.string(), // fully qualified function name

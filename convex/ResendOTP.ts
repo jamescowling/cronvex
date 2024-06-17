@@ -18,14 +18,17 @@ export const ResendOTP = Resend({
   }) {
     const resend = new ResendAPI(provider.apiKey);
     const { error } = await resend.emails.send({
-      from: "Cronvex <onboarding@resend.dev>",
+      // NOTE: Make sure you change the from address if you fork this code. The
+      // default email for sending via Resend is onboarding@resend.dev.
+      from: "Cronvex <admin@cronvex.com>",
       to: [email],
       subject: `Sign in to Cronvex`,
-      // Couldn't easily figure out why
+
+      // I couldn't easily figure out why
       //   react: VerificationCodeEmail({ code: token, expires }),
       // was giving a
       //   reactDOMServer.renderToPipeableStream is not a function
-      // error so just manually rendering.
+      // error so am just manually rendering for now.
       html: renderToStaticMarkup(
         VerificationCodeEmail({ code: token, expires })
       ),
