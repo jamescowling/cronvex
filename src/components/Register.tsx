@@ -428,7 +428,8 @@ export function Register() {
                   className="col-span-1"
                   disabled={
                     !formData.url ||
-                    !formData.cronspec ||
+                    (formData.scheduleType === "cronly" &&
+                      !formData.cronspec) ||
                     !formData.method ||
                     !isAuthenticated
                   }
