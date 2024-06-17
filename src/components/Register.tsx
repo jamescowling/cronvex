@@ -298,6 +298,7 @@ export function Register() {
                               value={formData.dailyTime}
                               onChange={handleChange}
                             />
+                            <div className="text-sm">UTC</div>
                           </div>
                         </div>
                       </TabsContent>
@@ -334,6 +335,7 @@ export function Register() {
                               value={formData.monthlyTime}
                               onChange={handleChange}
                             />
+                            <div className="text-sm">UTC</div>
                           </div>
                         </div>
                       </TabsContent>
@@ -352,6 +354,7 @@ export function Register() {
                             placeholder="0 9 * * 1-5"
                             required={formData.scheduleType === "cronly"}
                           />
+                          <div className="text-sm">UTC</div>
                         </div>
                       </TabsContent>
                     </div>
