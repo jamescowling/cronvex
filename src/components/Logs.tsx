@@ -18,9 +18,7 @@ export function Logs() {
     <Card>
       <CardHeader>
         <CardTitle className="text-lg">Logs</CardTitle>
-        <CardDescription>
-          Outbound http requests triggered by crons.
-        </CardDescription>
+        <CardDescription>Cron execution logs.</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>

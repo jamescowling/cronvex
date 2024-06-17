@@ -13,3 +13,5 @@ Convex must be defined statically in the `crons.ts` file.
 Note that it's _possible_ that a cron will be lost is the system grinds to a
 halt so much that the rescheduler function hits a user timeout. We can add a
 cleanup job for this.
+
+See [http://cronvex.com](http://cronvex.com) for a live demonstration of this service.

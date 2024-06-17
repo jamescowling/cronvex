@@ -11,7 +11,7 @@ import cronvexLogo from "/cronvex.svg";
 export default function App() {
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <div className="bg-secondary">
+      <div className="bg-secondary min-h-screen">
         <main className="container flex flex-col gap-8">
           <Header />
           <Crons />
@@ -33,7 +33,7 @@ function Header() {
         </span>
         <div className="flex gap-2">
           <a href="https://github.com/JamesCowling/cronvex">
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2 bg-primary-foreground">
               <svg fill="currentColor" viewBox="0 0 24 24" className="h-6">
                 <path
                   fillRule="evenodd"
