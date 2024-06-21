@@ -91,7 +91,6 @@ export function SignIn() {
             onSubmit={(event) => {
               event.preventDefault();
               const formData = new FormData(event.currentTarget);
-              console.log("this is the form data", formData);
               void verifyCode("resend-otp", formData);
               event.currentTarget.reset();
             }}
