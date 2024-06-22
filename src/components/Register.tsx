@@ -211,10 +211,22 @@ export function Register() {
                     }
                   >
                     <TabsList className="flex justify-between">
-                      <TabsTrigger value="hourly">Hourly</TabsTrigger>
-                      <TabsTrigger value="daily">Daily</TabsTrigger>
-                      <TabsTrigger value="monthly">Monthly</TabsTrigger>
-                      <TabsTrigger value="cronly">Cron Expression</TabsTrigger>
+                      <TabsTrigger value="hourly">
+                        <span className="block sm:hidden">Hour</span>
+                        <span className="hidden sm:block">Hourly</span>
+                      </TabsTrigger>
+                      <TabsTrigger value="daily">
+                        <span className="block sm:hidden">Day</span>
+                        <span className="hidden sm:block">Daily</span>
+                      </TabsTrigger>
+                      <TabsTrigger value="monthly">
+                        <span className="block sm:hidden">Month</span>
+                        <span className="hidden sm:block">Monthly</span>
+                      </TabsTrigger>
+                      <TabsTrigger value="cronly">
+                        <span className="block sm:hidden">Cron</span>
+                        <span className="hidden sm:block">Cron Expression</span>
+                      </TabsTrigger>
                     </TabsList>
 
                     <div className="flex flex-col px-6 py-2">
@@ -265,10 +277,10 @@ export function Register() {
                         <div className="flex flex-col gap-4">
                           <div className="flex flex-col gap-4">
                             <Label className="font-normal">Every</Label>
-                            <div className="grid grid-cols-4 gap-2">
+                            <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-3 gap-y-1">
                               {days.map((day) => (
                                 <div
-                                  className="flex items-center space-x-2"
+                                  className="items-center space-x-2"
                                   key={day}
                                 >
                                   <input
@@ -346,7 +358,7 @@ export function Register() {
                             Cron
                           </Label>
                           <Input
-                            className="w-auto"
+                            className="w-full sm:w-1/2"
                             id="cronspec"
                             name="cronspec"
                             value={formData.cronspec}
