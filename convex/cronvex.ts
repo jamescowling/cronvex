@@ -1,4 +1,4 @@
-// Main service code for Cronvex which users userspace crons to send recurring
+// Main service code for Cronvex which users user space crons to send recurring
 // http requests on a cron schedule.
 
 import { v } from "convex/values";

@@ -36,7 +36,7 @@ export function Profile() {
 
 export function SignIn() {
   const { signIn, verifyCode } = useAuthActions();
-  const [step, setStep] = useState<"signIn" | "code">("signIn");
+  const [step, setStep] = useState<"signIn" | { email: string }>("signIn");
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -57,8 +57,9 @@ export function SignIn() {
             onSubmit={(event) => {
               event.preventDefault();
               const formData = new FormData(event.currentTarget);
-              void signIn("resend-otp", formData).then(() => setStep("code"));
-              event.currentTarget.reset();
+              void signIn("resend-otp", formData).then(() =>
+                setStep({ email: formData.get("email") as string })
+              );
             }}
           >
             <div className="grid gap-2 py-4">
@@ -91,8 +92,13 @@ export function SignIn() {
             onSubmit={(event) => {
               event.preventDefault();
               const formData = new FormData(event.currentTarget);
-              void verifyCode("resend-otp", formData);
-              event.currentTarget.reset();
+              console.log("email", formData.get("email")); //
+              console.log("code", formData.get("code")); // 123456 (or whatever was in the
+              // void verifyCode("resend-otp", formData);
+              void verifyCode("resend-otp", {
+                code: formData.get("code") as string,
+                email: formData.get("email") as string,
+              });
             }}
           >
             <div className="grid gap-2 py-4">
@@ -110,6 +116,7 @@ export function SignIn() {
                   <InputOTPSlot index={5} />
                 </InputOTPGroup>
               </InputOTP>
+              <input name="email" value={step.email} type="hidden" />
             </div>
             <DialogFooter>
               <Button

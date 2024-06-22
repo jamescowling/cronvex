@@ -1,4 +1,4 @@
-// Implementation of crons in userspace.
+// Implementation of crons in user space.
 //
 // Crons can be registered at runtime via the `cron` or `interval` functions. If
 // you'd like to statically define cronjobs like in the built-in `crons.ts`
@@ -161,7 +161,7 @@ export async function intervalWithName<
 }
 
 /**
- * List all userspace cron jobs.
+ * List all user space cron jobs.
  *
  * @param ctx - Caller query context.
  * @returns List of `cron` table rows.
