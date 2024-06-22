@@ -110,7 +110,10 @@ export const listJobs = query({
         if (cron == null) {
           throw new Error("Cron not found");
         }
-        jobWithCron.cronspec = cron.cronspec;
+        if (cron.schedule.kind !== "cron") {
+          throw new Error("Expected cron schedule");
+        }
+        jobWithCron.cronspec = cron.schedule.cronspec;
       })
     );
     return jobsWithCrons;

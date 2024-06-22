@@ -68,7 +68,7 @@ export async function cron<FuncRef extends SchedulableFunctionReference>(
 ) {
   return await scheduleCron(
     ctx,
-    { cronspec, type: "cron" },
+    { cronspec, kind: "cron" },
     functionReference,
     undefined,
     ...args
@@ -99,7 +99,7 @@ export async function cronWithName<
 ) {
   return await scheduleCron(
     ctx,
-    { cronspec, type: "cron" },
+    { cronspec, kind: "cron" },
     functionReference,
     name,
     ...args
@@ -127,7 +127,7 @@ export async function interval<FuncRef extends SchedulableFunctionReference>(
 ) {
   return await scheduleCron(
     ctx,
-    { type: "interval", ms },
+    { kind: "interval", ms },
     func,
     undefined,
     ...args
@@ -157,7 +157,7 @@ export async function intervalWithName<
   func: FuncRef,
   ...args: OptionalRestArgs<FuncRef>
 ) {
-  return await scheduleCron(ctx, { type: "interval", ms }, func, name, ...args);
+  return await scheduleCron(ctx, { kind: "interval", ms }, func, name, ...args);
 }
 
 /**
@@ -233,8 +233,8 @@ export async function delByName(ctx: MutationCtx, name: string) {
 
 // The two types of crons.
 type Schedule =
-  | { type: "interval"; ms: number }
-  | { type: "cron"; cronspec: string };
+  | { kind: "interval"; ms: number }
+  | { kind: "cron"; cronspec: string };
 
 // Initial registration and scheduling of the cron job.
 async function scheduleCron(
@@ -248,22 +248,22 @@ async function scheduleCron(
   if (name && (await getByName(ctx, name))) {
     throw new Error(`Cron job with name ${name} already exists`);
   }
-  if (schedule.type === "interval" && schedule.ms < 1000) {
+  if (schedule.kind === "interval" && schedule.ms < 1000) {
     throw new Error("Interval must be >= 1000ms"); // Just a sanity check.
   }
-  if (schedule.type === "cron" && !parser.parseExpression(schedule.cronspec)) {
+  if (schedule.kind === "cron" && !parser.parseExpression(schedule.cronspec)) {
     throw new Error(`Invalid cronspec: ${schedule.cronspec}`);
   }
 
   args = parseArgs(args);
   const functionName = getFunctionName(func);
 
-  if (schedule.type === "interval") {
+  if (schedule.kind === "interval") {
     const cronJobId = await ctx.db.insert("crons", {
       functionName,
       args,
       name,
-      ms: schedule.ms,
+      schedule: { kind: "interval", ms: schedule.ms },
     });
     console.log(
       `Scheduling cron with name ${name} and id ${cronJobId} to run ${functionName}(${JSON.stringify(args)}) every ${schedule.ms} ms`
@@ -283,7 +283,7 @@ async function scheduleCron(
     functionName,
     args,
     name,
-    cronspec: schedule.cronspec,
+    schedule: { kind: "cron", cronspec: schedule.cronspec },
   });
   console.log(
     `Scheduling cron with name ${name} and id ${cronJobId} to run ${functionName}(${JSON.stringify(args)}) on cronspec ${schedule.cronspec}`
@@ -355,23 +355,8 @@ export const rescheduler = internalMutation({
     }
 
     // Now reschedule the next run.
-    if (cronJob.ms) {
-      const nextTime = schedulerJob.scheduledTime + cronJob.ms;
-      const nextSchedulerJobId = await ctx.scheduler.runAt(
-        nextTime,
-        internal.cronlib.rescheduler,
-        {
-          cronJobId: args.cronJobId,
-        }
-      );
-      await ctx.db.patch(args.cronJobId, {
-        schedulerJobId: nextSchedulerJobId,
-      });
-    } else if (cronJob.cronspec) {
-      const nextTime = nextScheduledDate(
-        new Date(schedulerJob.scheduledTime),
-        cronJob.cronspec
-      );
+    if (cronJob.schedule.kind === "interval") {
+      const nextTime = schedulerJob.scheduledTime + cronJob.schedule.ms;
       const nextSchedulerJobId = await ctx.scheduler.runAt(
         nextTime,
         internal.cronlib.rescheduler,
@@ -383,7 +368,20 @@ export const rescheduler = internalMutation({
         schedulerJobId: nextSchedulerJobId,
       });
     } else {
-      throw new Error("Cron job must have either ms or cronspec");
+      const nextTime = nextScheduledDate(
+        new Date(schedulerJob.scheduledTime),
+        cronJob.schedule.cronspec
+      );
+      const nextSchedulerJobId = await ctx.scheduler.runAt(
+        nextTime,
+        internal.cronlib.rescheduler,
+        {
+          cronJobId: args.cronJobId,
+        }
+      );
+      await ctx.db.patch(args.cronJobId, {
+        schedulerJobId: nextSchedulerJobId,
+      });
     }
   },
 });

@@ -12,11 +12,16 @@ export default defineSchema({
     name: v.optional(v.string()), // optional cron name
     functionName: v.string(), // fully qualified function name
     args: v.any(), // args as an object
-
-    // Schedule, only one should be set.
-    ms: v.optional(v.float64()), // milliseconds
-    cronspec: v.optional(v.string()), // "* * * * *"
-
+    schedule: v.union(
+      v.object({
+        kind: v.literal("interval"),
+        ms: v.float64(), // milliseconds
+      }),
+      v.object({
+        kind: v.literal("cron"),
+        cronspec: v.string(), // "* * * * *"
+      })
+    ),
     schedulerJobId: v.optional(v.id("_scheduled_functions")),
     executionJobId: v.optional(v.id("_scheduled_functions")),
   }).index("name", ["name"]),
