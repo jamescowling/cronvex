@@ -126,7 +126,6 @@ export function Register() {
         .map((day) => days.indexOf(day as Day))
         .join(",");
 
-      // TODO do this on onChange
       let cronspec = formData.cronspec;
       switch (formData.scheduleType) {
         case "hourly":
