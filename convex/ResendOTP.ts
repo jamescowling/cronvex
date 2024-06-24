@@ -3,7 +3,6 @@ import { ConvexError } from "convex/values";
 import { Resend as ResendAPI } from "resend";
 import { VerificationCodeEmail } from "./VerificationCodeEmail";
 import { alphabet, generateRandomString } from "oslo/crypto";
-import { renderToStaticMarkup } from "react-dom/server";
 
 export const ResendOTP = Resend({
   id: "resend-otp",
@@ -24,15 +23,7 @@ export const ResendOTP = Resend({
       from: "Cronvex <admin@cronvex.com>",
       to: [email],
       subject: `Sign in to Cronvex`,
-
-      // I couldn't easily figure out why
-      //   react: VerificationCodeEmail({ code: token, expires }),
-      // was giving a
-      //   reactDOMServer.renderToPipeableStream is not a function
-      // error so am just manually rendering for now.
-      html: renderToStaticMarkup(
-        VerificationCodeEmail({ code: token, expires })
-      ),
+      react: VerificationCodeEmail({ code: token, expires }),
     });
 
     if (error) {

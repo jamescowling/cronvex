@@ -10,7 +10,11 @@
     "predev": "convex dev --run init --until-success",
     "build": "tsc && vite build",
     "lint": "tsc && eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:once": "vitest run",
+    "test:debug": "vitest --inspect-brk --no-file-parallelism",
+    "test:coverage": "vitest run --coverage --coverage.reporter=text"
   },
   "dependencies": {
     "@auth/core": "^0.32.0",
@@ -62,13 +66,16 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@edge-runtime/vm": "^3.2.0",
     "@types/node": "^20.14.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.13.0",
     "@typescript-eslint/parser": "^7.13.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "@vitest/coverage-v8": "^1.6.0",
     "autoprefixer": "^10.4.19",
+    "convex-test": "^0.0.21",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
@@ -76,6 +83,12 @@
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.4.5",
-    "vite": "^5.2.13"
+    "vite": "^5.2.13",
+    "vitest": "^1.6.0"
+  },
+  "overrides": {
+    "resend": {
+      "@react-email/render": "0.0.16-canary.0"
+    }
   }
 }
