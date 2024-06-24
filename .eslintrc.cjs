@@ -18,6 +18,7 @@ module.exports = {
   parserOptions: {
     project: true,
     tsconfigRootDir: __dirname,
+    EXPERIMENTAL_useProjectService: true,
   },
   plugins: ["react-refresh"],
   rules: {
