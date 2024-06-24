@@ -142,7 +142,11 @@ function SignOut() {
   const { signOut } = useAuthActions();
 
   return (
-    <Button variant="outline" className="gap-2" onClick={() => void signOut()}>
+    <Button
+      variant="outline"
+      className="gap-2  bg-primary-foreground"
+      onClick={() => void signOut()}
+    >
       <div>Sign Out</div>
     </Button>
   );
