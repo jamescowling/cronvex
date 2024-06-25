@@ -74,7 +74,7 @@ test("management", async () => {
           message: "just testing... again",
         }
       )
-    ).rejects.toThrow("Cron job with name intervalJob already exists");
+    ).rejects.toThrow('Cron job with name "intervalJob" already exists');
   });
 
   // Invalid job spec/interval.
