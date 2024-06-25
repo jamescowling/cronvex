@@ -35,7 +35,7 @@ export function Profile() {
 }
 
 export function SignIn() {
-  const { signIn, verifyCode } = useAuthActions();
+  const { signIn } = useAuthActions();
   const [step, setStep] = useState<"signIn" | { email: string }>("signIn");
   return (
     <Dialog>
@@ -92,10 +92,7 @@ export function SignIn() {
             onSubmit={(event) => {
               event.preventDefault();
               const formData = new FormData(event.currentTarget);
-              console.log("email", formData.get("email")); //
-              console.log("code", formData.get("code")); // 123456 (or whatever was in the
-              // void verifyCode("resend-otp", formData);
-              void verifyCode("resend-otp", {
+              void signIn("resend-otp", {
                 code: formData.get("code") as string,
                 email: formData.get("email") as string,
               });
