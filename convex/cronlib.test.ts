@@ -80,10 +80,10 @@ test("management", async () => {
   // Invalid job spec/interval.
   await t.run(async (ctx) => {
     await expect(
-      cronlib.cron(ctx, "* * * * * *", internal.init.exampleCron, {
+      cronlib.cron(ctx, "just do it every day ok?", internal.init.exampleCron, {
         message: "just testing",
       })
-    ).rejects.toThrow("Invalid cronspec: * * * * * *");
+    ).rejects.toThrow('Invalid cronspec: "just do it every day ok?"');
   });
   await t.run(async (ctx) => {
     await expect(

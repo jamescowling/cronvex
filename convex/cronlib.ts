@@ -226,7 +226,7 @@ export async function del(ctx: MutationCtx, cronJobId: Id<"crons">) {
 export async function delByName(ctx: MutationCtx, name: string) {
   const cronJob = await getByName(ctx, name);
   if (!cronJob) {
-    throw new Error(`Cron job ${name} not found`);
+    throw new Error(`Cron job "${name}" not found`);
   }
   await del(ctx, cronJob._id);
 }
@@ -246,13 +246,17 @@ async function scheduleCron(
 ) {
   // Input validation
   if (name && (await getByName(ctx, name))) {
-    throw new Error(`Cron job with name ${name} already exists`);
+    throw new Error(`Cron job with name "${name}" already exists`);
   }
   if (schedule.kind === "interval" && schedule.ms < 1000) {
     throw new Error("Interval must be >= 1000ms"); // Just a sanity check.
   }
-  if (schedule.kind === "cron" && !parser.parseExpression(schedule.cronspec)) {
-    throw new Error(`Invalid cronspec: ${schedule.cronspec}`);
+  if (schedule.kind === "cron") {
+    try {
+      parser.parseExpression(schedule.cronspec);
+    } catch {
+      throw new Error(`Invalid cronspec: "${schedule.cronspec}"`);
+    }
   }
 
   args = parseArgs(args);
@@ -266,7 +270,7 @@ async function scheduleCron(
       schedule: { kind: "interval", ms: schedule.ms },
     });
     console.log(
-      `Scheduling cron with name ${name} and id ${cronJobId} to run ${functionName}(${JSON.stringify(args)}) every ${schedule.ms} ms`
+      `Scheduling cron with name "${name}" and id ${cronJobId} to run ${functionName}(${JSON.stringify(args)}) every ${schedule.ms} ms`
     );
     const schedulerJobId = await ctx.scheduler.runAfter(
       schedule.ms,
@@ -286,7 +290,7 @@ async function scheduleCron(
     schedule: { kind: "cron", cronspec: schedule.cronspec },
   });
   console.log(
-    `Scheduling cron with name ${name} and id ${cronJobId} to run ${functionName}(${JSON.stringify(args)}) on cronspec ${schedule.cronspec}`
+    `Scheduling cron with name "${name}" and id ${cronJobId} to run ${functionName}(${JSON.stringify(args)}) on cronspec "${schedule.cronspec}"`
   );
   const schedulerJobId = await ctx.scheduler.runAt(
     nextScheduledDate(new Date(), schedule.cronspec),
