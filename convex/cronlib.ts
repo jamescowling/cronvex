@@ -31,8 +31,6 @@ import { internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 import parser from "cron-parser";
 
-// TODO check if the scheduler will fail if we try to schedule in the past
-
 // TODO probably want to add some kind of lightweight should-never-fail janitor
 // job which checks if any rescheduler runs failed and reschedules them
 

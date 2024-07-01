@@ -93,15 +93,13 @@ test("management", async () => {
     ).rejects.toThrow("Interval must be >= 1000ms");
   });
 
-  // Make sure they show up in list, in any order.
+  // List and delete.
   const allJobs = await t.run(async (ctx) => {
     return cronlib.list(ctx);
   });
   expect(allJobs.length).toBe(4);
   expect(allJobs).toContainEqual(cronJob);
   expect(allJobs).toContainEqual(otherJob);
-
-  // Delete via name and id.
   await t.run(async (ctx) => {
     await cronlib.delByName(ctx, "cronJob");
     await cronlib.del(ctx, unnamedCronJobId);
