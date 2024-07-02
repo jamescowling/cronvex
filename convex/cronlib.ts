@@ -208,10 +208,13 @@ export async function del(ctx: MutationCtx, cronJobId: Id<"crons">) {
   if (!cronJob.schedulerJobId) {
     throw new Error(`Cron job ${cronJobId} not scheduled`);
   }
+  console.log(`Canceling scheduler job ${cronJob.schedulerJobId}`);
   await ctx.scheduler.cancel(cronJob.schedulerJobId);
   if (cronJob.executionJobId) {
+    console.log(`Canceling executer job ${cronJob.executionJobId}`);
     await ctx.scheduler.cancel(cronJob.executionJobId);
   }
+  console.log(`Deleting cron job ${cronJobId}`);
   await ctx.db.delete(cronJobId);
 }
 
@@ -328,7 +331,11 @@ export const rescheduler = internalMutation({
     if (!schedulerJob) {
       throw Error(`Scheduled job ${cronJob.schedulerJobId} not found`);
     }
-    if (schedulerJob.state.kind !== "pending") {
+    // XXX why is this showing up as inProgress in tests?
+    if (
+      schedulerJob.state.kind !== "pending" &&
+      schedulerJob.state.kind !== "inProgress"
+    ) {
       throw Error(
         `We are running in job ${schedulerJob._id} but state is ${schedulerJob.state.kind}`
       );

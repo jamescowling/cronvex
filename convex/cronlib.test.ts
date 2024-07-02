@@ -1,4 +1,4 @@
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import schema from "./schema";
 import { convexTest } from "convex-test";
 import { internal } from "./_generated/api";
@@ -112,13 +112,60 @@ test("management", async () => {
   expect(noJobs.length).toBe(0);
 });
 
+// Test scheduling actually works.
+// XXX this test currently fails
 test("scheduling", async () => {
-  // TODO test various types of cron schedules that run at the expected time
-  expect(1).toBe(1);
+  vi.useFakeTimers();
+  const t = convexTest(schema);
+  await t.mutation(internal.testUtils.testReset, {});
+
+  const hourly = await t.run(async (ctx) => {
+    return cronlib.cron(ctx, "0 * * * *", internal.testUtils.testIncrement, {});
+  });
+  const semiMinutely = await t.run(async (ctx) => {
+    return cronlib.interval(ctx, 30000, internal.testUtils.testIncrement, {});
+  });
+  expect(await t.query(internal.testUtils.testGet, {})).toBe(0);
+
+  // XXX what happens if we don't call finishInProgressScheduledFunctions()?
+  // does this mean that the rescheduler is ready to run but hasn't yet?
+  // so even if it gets canceled by delete it will still run?
+  vi.advanceTimersByTime(60 * 60 * 1000);
+  await t.finishInProgressScheduledFunctions();
+  // XXX this is required to get the execution job to run even though it seems
+  // like it shouldn't need time advanced, since it's ctx.scheduler.runAfter(0, cronFunction, cronJob.args);
+  vi.advanceTimersByTime(1);
+  await t.finishInProgressScheduledFunctions();
+  // hourly should have run once, semiMinutely should have run 120 times.
+  expect(await t.query(internal.testUtils.testGet, {})).toBe(121);
+
+  vi.advanceTimersByTime(60 * 60 * 1000);
+  await t.finishInProgressScheduledFunctions();
+  vi.advanceTimersByTime(1);
+  await t.finishInProgressScheduledFunctions();
+  // hourly should have run once more, semiMinutely should have run another 120 times.
+  expect(await t.query(internal.testUtils.testGet, {})).toBe(242);
+
+  await t.run(async (ctx) => {
+    await cronlib.del(ctx, hourly);
+  });
+  vi.advanceTimersByTime(123456);
+  await t.finishInProgressScheduledFunctions();
+  vi.advanceTimersByTime(1);
+  await t.finishInProgressScheduledFunctions();
+  // semiMinutely should have run another 4 times.
+  expect(await t.query(internal.testUtils.testGet, {})).toBe(246);
+
+  await t.run(async (ctx) => {
+    await cronlib.del(ctx, semiMinutely);
+  });
+  await t.finishAllScheduledFunctions(vi.runAllTimers);
+  expect(await t.query(internal.testUtils.testGet, {})).toBe(246);
+  vi.useRealTimers();
 });
 
-test("independence", async () => {
-  // TODO test if function raises rescheduler keeps going
-  // TODO test if function keeps running forever the rescheduler doesn't double schedule
-  expect(1).toBe(1);
-});
+// test("independence", async () => {
+//   // TODO test if function raises rescheduler keeps going
+//   // TODO test if function keeps running forever the rescheduler doesn't double schedule
+//   expect(1).toBe(1);
+// });
