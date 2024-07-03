@@ -52,9 +52,4 @@ export default defineSchema({
     status: v.float64(),
     response: v.string(),
   }).index("userId", ["userId"]),
-
-  // XXX move to inline
-  testData: defineTable({
-    counter: v.float64(),
-  }),
 });

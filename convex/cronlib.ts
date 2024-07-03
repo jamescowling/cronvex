@@ -331,7 +331,9 @@ export const rescheduler = internalMutation({
     if (!schedulerJob) {
       throw Error(`Scheduled job ${cronJob.schedulerJobId} not found`);
     }
-    // XXX why is this showing up as inProgress in tests?
+    // XXX The convex-test library runs mutations through the `inProgress` state
+    // but the production state machine does not. Remove the `inProgress` allowance
+    // once the test library has been updated.
     if (
       schedulerJob.state.kind !== "pending" &&
       schedulerJob.state.kind !== "inProgress"

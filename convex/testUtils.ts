@@ -1,37 +1,53 @@
-import { internalMutation, internalQuery } from "./_generated/server";
+// Test-only utilities for running functions on a test-only table.
 
-export const testReset = internalMutation({
+import {
+  defineSchema,
+  defineTable,
+  internalMutationGeneric,
+  internalQueryGeneric,
+} from "convex/server";
+import { v } from "convex/values";
+import schema from "./schema";
+
+// This schema doesn't show up in prod since it's not exported from schema.ts
+// but is used to instantiate convexTest in test utilities.
+export const testSchema = defineSchema({
+  ...schema.tables,
+  TEST_data: defineTable({
+    counter: v.float64(),
+  }),
+});
+
+// Test functions are defined as Generic so they can use the test-only schema.
+export const TEST_reset = internalMutationGeneric({
   handler: async (ctx) => {
-    console.log("testReset");
-    const meta = await ctx.db.query("testData").unique();
-    if (meta != null) {
+    console.log("TEST_reset");
+    const testData = await ctx.db.query("TEST_data").unique();
+    if (testData != null) {
       console.log("counter = 0");
-      await ctx.db.delete(meta._id);
+      await ctx.db.delete(testData._id);
     }
   },
 });
 
-export const testIncrement = internalMutation({
+export const TEST_increment = internalMutationGeneric({
   handler: async (ctx) => {
-    console.log("testIncrement");
-    const meta = await ctx.db.query("testData").unique();
-    if (meta == null) {
+    console.log("TEST_increment");
+    const testData = await ctx.db.query("TEST_data").unique();
+    if (testData == null) {
       console.log("counter = 1");
-      await ctx.db.insert("testData", { counter: 1 });
+      await ctx.db.insert("TEST_data", { counter: 1 });
     } else {
-      console.log(`counter = ${meta.counter + 1}`);
-      await ctx.db.patch(meta._id, { counter: meta.counter + 1 });
+      console.log(`counter = ${testData.counter + 1}`);
+      await ctx.db.patch(testData._id, { counter: testData.counter + 1 });
     }
   },
 });
 
-export const testGet = internalQuery({
+export const TEST_get = internalQueryGeneric({
   handler: async (ctx) => {
-    console.log("testGet");
-    const allMeta = await ctx.db.query("testData").collect();
-    console.log(`allMeta = ${JSON.stringify(allMeta)}`);
-    // Sometimes there are two rows in testData...
-    const meta = await ctx.db.query("testData").unique();
-    return meta?.counter ?? 0;
+    console.log("TEST_get");
+    const testData = await ctx.db.query("TEST_data").unique();
+    return testData?.counter ?? 0;
   },
 });
