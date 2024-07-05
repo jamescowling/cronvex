@@ -17,8 +17,7 @@
     "test:coverage": "vitest run --coverage --coverage.reporter=text"
   },
   "dependencies": {
-    "@auth/core": "^0.34.1",
-    "@convex-dev/auth": "^0.0.25",
+    "@convex-dev/auth": "^0.0.28",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
@@ -51,7 +50,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
-    "convex": "^1.12.2",
+    "convex": "^1.13.0",
     "cron-parser": "^4.9.0",
     "date-fns": "^3.6.0",
     "input-otp": "^1.2.4",

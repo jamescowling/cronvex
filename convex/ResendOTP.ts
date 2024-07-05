@@ -1,12 +1,12 @@
-import Resend from "@auth/core/providers/resend";
-import { ConvexError } from "convex/values";
+import { Email } from "@convex-dev/auth/providers/Email";
+import { alphabet, generateRandomString } from "oslo/crypto";
 import { Resend as ResendAPI } from "resend";
 import { VerificationCodeEmail } from "./VerificationCodeEmail";
-import { alphabet, generateRandomString } from "oslo/crypto";
 
-export const ResendOTP = Resend({
+export const ResendOTP = Email({
   id: "resend-otp",
   apiKey: process.env.AUTH_RESEND_KEY,
+  maxAge: 60 * 20,
   async generateVerificationToken() {
     return generateRandomString(6, alphabet("0-9"));
   },
@@ -27,7 +27,7 @@ export const ResendOTP = Resend({
     });
 
     if (error) {
-      throw new ConvexError("Could not send verification code email");
+      throw new Error(JSON.stringify(error));
     }
   },
 });
