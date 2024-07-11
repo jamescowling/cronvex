@@ -40,7 +40,7 @@ function SignOut() {
       className="gap-2  bg-primary-foreground"
       onClick={() => void signOut()}
     >
-      <div>Sign Out</div>
+      Sign Out
     </Button>
   );
 }

@@ -21,10 +21,8 @@ export const testSchema = defineSchema({
 // Test functions are defined as Generic so they can use the test-only schema.
 export const TEST_reset = internalMutationGeneric({
   handler: async (ctx) => {
-    console.log("TEST_reset");
     const testData = await ctx.db.query("TEST_data").unique();
     if (testData != null) {
-      console.log("counter = 0");
       await ctx.db.delete(testData._id);
     }
   },
@@ -32,13 +30,10 @@ export const TEST_reset = internalMutationGeneric({
 
 export const TEST_increment = internalMutationGeneric({
   handler: async (ctx) => {
-    console.log("TEST_increment");
     const testData = await ctx.db.query("TEST_data").unique();
     if (testData == null) {
-      console.log("counter = 1");
       await ctx.db.insert("TEST_data", { counter: 1 });
     } else {
-      console.log(`counter = ${testData.counter + 1}`);
       await ctx.db.patch(testData._id, { counter: testData.counter + 1 });
     }
   },
@@ -46,7 +41,6 @@ export const TEST_increment = internalMutationGeneric({
 
 export const TEST_get = internalQueryGeneric({
   handler: async (ctx) => {
-    console.log("TEST_get");
     const testData = await ctx.db.query("TEST_data").unique();
     return testData?.counter ?? 0;
   },
