@@ -149,17 +149,16 @@ test("scheduling", async () => {
   const minutely = await t.run(async (ctx) => {
     return cronlib.interval(ctx, 60000, internal.testUtils.TEST_increment, {});
   });
-  expect(await t.query(internal.testUtils.TEST_get, {})).toBe(0);
 
   // hourly should run once, minutely should run 60 times.
   vi.advanceTimersByTime(60 * 60 * 1000);
   await advanceSchedulerBy(vi, t, 200);
-  expect(await t.query(internal.testUtils.TEST_get, {})).toBe(61);
+  expect((await t.query(internal.testUtils.TEST_get, {})).counter).toBe(61);
 
   // hourly should run once more, minutely should run another 60 times.
   vi.advanceTimersByTime(60 * 60 * 1000 - 200); // -200 to make up for advanceSchedulerBy
   await advanceSchedulerBy(vi, t, 200);
-  expect(await t.query(internal.testUtils.TEST_get, {})).toBe(122);
+  expect((await t.query(internal.testUtils.TEST_get, {})).counter).toBe(122);
 
   await t.run(async (ctx) => {
     await cronlib.del(ctx, hourly);
@@ -167,19 +166,60 @@ test("scheduling", async () => {
   // minutely should run another 2 times.
   vi.advanceTimersByTime(123456);
   await advanceSchedulerBy(vi, t, 200);
-  expect(await t.query(internal.testUtils.TEST_get, {})).toBe(124);
+  expect((await t.query(internal.testUtils.TEST_get, {})).counter).toBe(124);
 
   await t.run(async (ctx) => {
     await cronlib.del(ctx, minutely);
   });
   // No more jobs to run.
   await advanceSchedulerBy(vi, t, 200);
-  expect(await t.query(internal.testUtils.TEST_get, {})).toBe(124);
+  expect((await t.query(internal.testUtils.TEST_get, {})).counter).toBe(124);
   vi.useRealTimers();
 });
 
-// test("independence", async () => {
-//   // TODO test if function raises rescheduler keeps going
-//   // TODO test if function keeps running forever the rescheduler doesn't double schedule
-//   expect(1).toBe(1);
-// });
+// Test that scheduled functions are independent and don't interfere with each
+// other.
+test("independence", async () => {
+  // XXX These tests don't pass in convex-test because it doesn't exactly mirror
+  // the prod scheduler. We really should be using the local backend instead.
+  // One day Convex will add deterministic simulation testing to this :)
+  return;
+
+  vi.useFakeTimers();
+  const t = convexTest(testSchema);
+  await t.mutation(internal.testUtils.TEST_reset, {});
+
+  const goodie = await t.run(async (ctx) => {
+    // Increments every second.
+    return cronlib.interval(ctx, 1000, internal.testUtils.TEST_increment, {});
+  });
+  vi.advanceTimersByTime(1); // goodie should always run just before flaky
+  const flaky = await t.run(async (ctx) => {
+    // Alternates incrementing and failing.
+    return cronlib.interval(ctx, 1000, internal.testUtils.TEST_flake, {});
+  });
+  vi.advanceTimersByTime(1);
+  const slowpoke = await t.run(async (ctx) => {
+    // Takes 1.1 seconds to run.
+    return cronlib.interval(ctx, 1000, internal.testUtils.TEST_slow, {});
+  });
+
+  vi.advanceTimersByTime(3500);
+  await advanceSchedulerBy(vi, t, 200);
+  let testData = await t.query(internal.testUtils.TEST_get, {});
+  expect(testData.counter).toBe(3);
+  expect(testData.flakyCounter).toBe(2);
+  expect(testData.slowCounter).toBe(2);
+
+  await t.run(async (ctx) => {
+    await cronlib.del(ctx, goodie);
+    await cronlib.del(ctx, flaky);
+    await cronlib.del(ctx, slowpoke);
+  });
+  await advanceSchedulerBy(vi, t, 200);
+  testData = await t.query(internal.testUtils.TEST_get, {});
+  expect(testData.counter).toBe(5);
+  expect(testData.flakyCounter).toBe(2);
+  expect(testData.slowCounter).toBe(2);
+  vi.useRealTimers();
+});
