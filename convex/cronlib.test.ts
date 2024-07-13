@@ -177,14 +177,8 @@ test("scheduling", async () => {
   vi.useRealTimers();
 });
 
-// Test that scheduled functions are independent and don't interfere with each
-// other.
-test("independence", async () => {
-  // XXX These tests don't pass in convex-test because it doesn't exactly mirror
-  // the prod scheduler. We really should be using the local backend instead.
-  // One day Convex will add deterministic simulation testing to this :)
-  return;
-
+// Test that scheduling doesn't fail if a job fails.
+test("failures", async () => {
   vi.useFakeTimers();
   const t = convexTest(testSchema);
   await t.mutation(internal.testUtils.TEST_reset, {});
@@ -195,31 +189,49 @@ test("independence", async () => {
   });
   vi.advanceTimersByTime(1); // goodie should always run just before flaky
   const flaky = await t.run(async (ctx) => {
-    // Alternates incrementing and failing.
+    // Fails if counter is even.
     return cronlib.interval(ctx, 1000, internal.testUtils.TEST_flake, {});
   });
-  vi.advanceTimersByTime(1);
+
+  // Each cron should fire three times with goodie running before flaky. The
+  // good counter will increment each time but the flakyCounter will throw the
+  // second time around.
+  vi.advanceTimersByTime(3000);
+  await advanceSchedulerBy(vi, t, 200);
+  const testData = await t.query(internal.testUtils.TEST_get, {});
+  expect(testData.counter).toBe(3);
+  expect(testData.flakyCounter).toBe(2);
+
+  await t.run(async (ctx) => {
+    await cronlib.del(ctx, goodie);
+    await cronlib.del(ctx, flaky);
+  });
+  vi.useRealTimers();
+});
+
+// Test that we don't double-schedule jobs that are still running at their next
+// scheduled time.
+test("slowpokes", async () => {
+  vi.useFakeTimers();
+  const t = convexTest(testSchema);
+  await t.mutation(internal.testUtils.TEST_reset, {});
+
+  // XXX I don't know if this will ever work in test since I'm doing a
+  // setTimeout(resolve, 1100) in TEST_slow which I don't know if is compatible
+  // with the mock timer.
   const slowpoke = await t.run(async (ctx) => {
     // Takes 1.1 seconds to run.
     return cronlib.interval(ctx, 1000, internal.testUtils.TEST_slow, {});
   });
 
+  // The cron should fire three times but the second time shouldn't execute
+  // because the job is still running.
   vi.advanceTimersByTime(3500);
   await advanceSchedulerBy(vi, t, 200);
-  let testData = await t.query(internal.testUtils.TEST_get, {});
-  expect(testData.counter).toBe(3);
-  expect(testData.flakyCounter).toBe(2);
-  expect(testData.slowCounter).toBe(2);
+  expect((await t.query(internal.testUtils.TEST_get, {})).slowCounter).toBe(2);
 
   await t.run(async (ctx) => {
-    await cronlib.del(ctx, goodie);
-    await cronlib.del(ctx, flaky);
     await cronlib.del(ctx, slowpoke);
   });
-  await advanceSchedulerBy(vi, t, 200);
-  testData = await t.query(internal.testUtils.TEST_get, {});
-  expect(testData.counter).toBe(5);
-  expect(testData.flakyCounter).toBe(2);
-  expect(testData.slowCounter).toBe(2);
   vi.useRealTimers();
 });
