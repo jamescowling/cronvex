@@ -34,7 +34,7 @@ export function Header() {
 
       <div className="text-sm text-muted-foreground px-1 max-w-2xl">
         Cronvex is free and built as a demonstration of scheduled jobs on{" "}
-        <a href="https://convex.dev" className="font-bold">
+        <a href="https://convex.dev/c/cronvex" className="font-bold">
           Convex
         </a>
         . You're welcome to use the{" "}
