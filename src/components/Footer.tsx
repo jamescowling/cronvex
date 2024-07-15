@@ -26,7 +26,7 @@ export function Footer() {
     },
     {
       name: "Convex",
-      href: "https://convex.dev",
+      href: "https://convex.dev/c/cronvex",
       icon: (props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) => (
         <svg fill="currentColor" viewBox="0 0 611.25 615.51" {...props}>
           <g id="b">
