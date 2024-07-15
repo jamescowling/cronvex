@@ -26,7 +26,7 @@ export function Footer() {
     },
     {
       name: "Convex",
-      href: "https://convex.dev",
+      href: "https://convex.dev/c/cronvex",
       icon: (props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) => (
         <svg fill="currentColor" viewBox="0 0 611.25 615.51" {...props}>
           <g id="b">
@@ -52,8 +52,19 @@ export function Footer() {
   ];
 
   return (
-    <footer>
-      <div className="mx-auto max-w-7xl px-2 py-12 md:flex md:items-center md:justify-between lg:px-2">
+    <footer className="py-4 px-2">
+      <div className="text-sm text-muted-foreground max-w-lg">
+        Cronvex is free and built as a demonstration of scheduled jobs on{" "}
+        <a href="https://convex.dev/c/cronvex" className="font-bold">
+          Convex
+        </a>
+        . You're welcome to use the{" "}
+        <a href="https://github.com/JamesCowling/cronvex" className="font-bold">
+          Cronvex source
+        </a>{" "}
+        in any way you like.
+      </div>
+      <div className="mx-auto max-w-7xl py-6 md:flex md:items-center md:justify-between lg:px-2">
         <div className="flex justify-center space-x-6 md:order-2">
           {navigation.map((item) => (
             <a
@@ -66,7 +77,7 @@ export function Footer() {
             </a>
           ))}
         </div>
-        <div className="mt-8 md:order-1 md:mt-0">
+        <div className="mt-6 md:order-1 md:mt-0">
           <p className="text-center text-xs leading-5 text-muted-foreground">
             MIT Licensed. Do whatevs.
           </p>

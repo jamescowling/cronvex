@@ -6,12 +6,21 @@ import cronvexLogo from "/cronvex.svg";
 export function Header() {
   return (
     <div className="flex flex-col gap-8 mt-12">
-      <div className="flex flex-col sm:flex-row justify-between items-center">
-        <div className="flex gap-4">
-          <img src={cronvexLogo} alt="Cronvex" className="h-12 w-auto ml-1" />
-          <h1 className="text-4xl font-bold mt-1">Cronvex</h1>
+      <div className="flex flex-col md:flex-row justify-between items-center">
+        <div className="flex flex-col items-center md:items-start">
+          <div className="flex gap-4">
+            <img
+              src={cronvexLogo}
+              alt="Cronvex"
+              className="h-12 w-auto md:ml-1"
+            />
+            <h1 className="text-4xl font-bold mt-1 pr-2 md:pr-0">Cronvex</h1>
+          </div>
+          <div className="text-md mt-4 px-1">
+            Send http requests on a periodic schedule.
+          </div>
         </div>
-        <div className="flex gap-2 mt-6 sm:mt-0">
+        <div className="flex gap-2 mt-4 md:mt-0 md:pb-10">
           <a href="https://github.com/JamesCowling/cronvex">
             <Button variant="outline" className="gap-2 bg-primary-foreground">
               <svg fill="currentColor" viewBox="0 0 24 24" className="h-6">
@@ -21,25 +30,12 @@ export function Header() {
                   clipRule="evenodd"
                 />
               </svg>
-              <div>GitHub source</div>
+              <div>Source Code</div>
             </Button>
           </a>
           <ModeToggle />
           <Profile />
         </div>
-      </div>
-
-      <div className="text-sm text-muted-foreground px-1 max-w-2xl">
-        Send http requests on a periodic schedule. Cronvex is free and built as
-        a demonstration of scheduled jobs on{" "}
-        <a href="https://convex.dev" className="font-bold">
-          Convex
-        </a>
-        . You're welcome to use the{" "}
-        <a href="https://github.com/JamesCowling/cronvex" className="font-bold">
-          Cronvex source
-        </a>{" "}
-        in any way you like.
       </div>
     </div>
   );
