@@ -28,10 +28,12 @@ export function Header() {
           <Profile />
         </div>
       </div>
+      <div className="text-2xl text-muted-foreground px-1 max-w-2xl">
+        Send http requests on a periodic schedule.
+      </div>
 
       <div className="text-sm text-muted-foreground px-1 max-w-2xl">
-        Send http requests on a periodic schedule. Cronvex is free and built as
-        a demonstration of scheduled jobs on{" "}
+        Cronvex is free and built as a demonstration of scheduled jobs on{" "}
         <a href="https://convex.dev" className="font-bold">
           Convex
         </a>
