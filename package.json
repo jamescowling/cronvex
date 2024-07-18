@@ -17,7 +17,7 @@
     "test:coverage": "vitest run --coverage --coverage.reporter=text"
   },
   "dependencies": {
-    "@convex-dev/auth": "^0.0.35",
+    "@convex-dev/auth": "^0.0.38",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
@@ -46,15 +46,15 @@
     "@radix-ui/react-toggle": "^1.0.3",
     "@radix-ui/react-tooltip": "^1.0.7",
     "@react-email/components": "^0.0.21",
-    "@tanstack/react-table": "^8.17.3",
+    "@tanstack/react-table": "^8.19.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
-    "convex": "^1.13.0",
+    "convex": "^1.13.1",
     "cron-parser": "^4.9.0",
     "date-fns": "^3.6.0",
     "input-otp": "^1.2.4",
-    "lucide-react": "^0.407.0",
+    "lucide-react": "^0.408.0",
     "oslo": "^1.2.0",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
@@ -65,14 +65,14 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@edge-runtime/vm": "^4.0.0",
-    "@types/node": "^20.14.10",
+    "@edge-runtime/vm": "^4.0.1",
+    "@types/node": "^20.14.11",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@typescript-eslint/eslint-plugin": "^7.13.0",
-    "@typescript-eslint/parser": "^7.13.0",
+    "@typescript-eslint/eslint-plugin": "^7.16.1",
+    "@typescript-eslint/parser": "^7.16.1",
     "@vitejs/plugin-react": "^4.3.1",
-    "@vitest/coverage-v8": "^2.0.2",
+    "@vitest/coverage-v8": "^2.0.3",
     "autoprefixer": "^10.4.19",
     "convex-test": "^0.0.23",
     "eslint": "^8.57.0",
@@ -80,10 +80,10 @@
     "eslint-plugin-react-refresh": "^0.4.7",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.4",
+    "tailwindcss": "^3.4.6",
     "typescript": "^5.4.5",
-    "vite": "^5.2.13",
-    "vitest": "^2.0.2"
+    "vite": "^5.3.4",
+    "vitest": "^2.0.3"
   },
   "overrides": {
     "resend": {
