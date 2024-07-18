@@ -31,9 +31,6 @@ import { internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 import parser from "cron-parser";
 
-// TODO probably want to add some kind of lightweight should-never-fail janitor
-// job which checks if any rescheduler runs failed and reschedules them
-
 /**
  * Schedule a mutation or action to run on a recurring basis.
  *

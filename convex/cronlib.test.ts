@@ -177,9 +177,3 @@ test("scheduling", async () => {
   expect(await t.query(internal.testUtils.TEST_get, {})).toBe(124);
   vi.useRealTimers();
 });
-
-// test("independence", async () => {
-//   // TODO test if function raises rescheduler keeps going
-//   // TODO test if function keeps running forever the rescheduler doesn't double schedule
-//   expect(1).toBe(1);
-// });
