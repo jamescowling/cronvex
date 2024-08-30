@@ -3,10 +3,8 @@
 Send http requests on a periodic schedule.
 
 This is an implementation of a http webhook-calling cron service running on
-[Convex](https://convex.dev). Cronvex was built as a demo of user space
-crons as implemented in `cronlib.ts`. We'll eventually port these directly
-into Convex but in the meantime you can copy this file if you want to add user
-space crons to your own Convex project.
+[Convex](https://convex.dev). Cronvex was originally built as a demo of
+userspace crons before these were turned into a standalone Convex component.
 
 A user space cron, as opposed to the built-in crons that come by default with
 Convex, allow declaration of crons at runtime. The built-in crons in Convex can only be defined statically, in a file called `crons.ts`.

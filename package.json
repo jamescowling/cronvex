@@ -50,7 +50,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
-    "convex": "^1.14.4",
+    "convex": "^1.15.1-alpha.0",
     "cron-parser": "^4.9.0",
     "date-fns": "^3.6.0",
     "input-otp": "^1.2.4",

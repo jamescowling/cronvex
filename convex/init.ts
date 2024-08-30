@@ -1,14 +1,15 @@
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { internalMutation } from "./_generated/server";
-import { cronWithName, getByName } from "./cronlib";
+import { components } from "./_generated/server";
+import { createFunctionHandle } from "convex/server";
 
 export const exampleCron = internalMutation({
   args: {
     message: v.string(),
   },
-  handler: async (_ctx, args) => {
-    console.log(args.message);
+  handler: async (_ctx, { message }) => {
+    console.log(message);
   },
 });
 
@@ -17,16 +18,19 @@ export const exampleCron = internalMutation({
 // running `convex dev --run init`.
 export default internalMutation({
   handler: async (ctx) => {
-    if ((await getByName(ctx, "exampleDailyCron")) == null) {
-      await cronWithName(
-        ctx,
-        "exampleDailyCron",
-        "0 0 * * *",
-        internal.init.exampleCron,
-        {
+    if (
+      (await ctx.runQuery(components.crons.lib.getByName, {
+        name: "exampleDailyCron",
+      })) == null
+    ) {
+      await ctx.runMutation(components.crons.lib.registerCron, {
+        name: "exampleDailyCron",
+        cronspec: "0 0 * * *",
+        functionHandle: await createFunctionHandle(internal.init.exampleCron),
+        args: {
           message: "unnecessary daily log message!",
-        }
-      );
+        },
+      });
     }
   },
 });

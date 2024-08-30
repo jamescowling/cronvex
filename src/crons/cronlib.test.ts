@@ -1,3 +1,5 @@
+// XXX these tests are all broken now that we're on the components alpha
+
 import { expect, test, vi, VitestUtils } from "vitest";
 import schema from "./schema";
 import { convexTest, TestConvex } from "convex-test";

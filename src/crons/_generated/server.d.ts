@@ -148,31 +148,9 @@ export type DatabaseReader = GenericDatabaseReader<DataModel>;
  */
 export type DatabaseWriter = GenericDatabaseWriter<DataModel>;
 
-export declare const components: {
-  crons: {
-    lib: {
-      del: FunctionReference<"mutation", "internal", { id: string }, any>;
-      delByName: FunctionReference<
-        "mutation",
-        "internal",
-        { name: string },
-        any
-      >;
-      get: FunctionReference<"query", "internal", { id: string }, any>;
-      getByName: FunctionReference<"query", "internal", { name: string }, any>;
-      list: FunctionReference<"query", "internal", any, any>;
-      registerCron: FunctionReference<
-        "mutation",
-        "internal",
-        { args: any; cronspec: string; functionHandle: string; name?: string },
-        any
-      >;
-      registerInterval: FunctionReference<
-        "mutation",
-        "internal",
-        { args: any; functionHandle: string; ms: number; name?: string },
-        any
-      >;
-    };
-  };
-};
+export declare const components: {};
+type ComponentArgs = {};
+export declare const componentArg: <Name extends keyof ComponentArgs>(
+  ctx: GenericCtx,
+  name: Name,
+) => ComponentArgs[Name];
