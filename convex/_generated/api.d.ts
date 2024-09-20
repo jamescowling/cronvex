@@ -51,30 +51,6 @@ export declare const internal: FilterApi<
 
 export declare const components: {
   crons: {
-    index: {
-      del: FunctionReference<"mutation", "internal", { id: string }, any>;
-      delByName: FunctionReference<
-        "mutation",
-        "internal",
-        { name: string },
-        any
-      >;
-      get: FunctionReference<"query", "internal", { id: string }, any>;
-      getByName: FunctionReference<"query", "internal", { name: string }, any>;
-      list: FunctionReference<"query", "internal", {}, any>;
-      registerCron: FunctionReference<
-        "mutation",
-        "internal",
-        { args: any; cronspec: string; functionHandle: string; name?: string },
-        any
-      >;
-      registerInterval: FunctionReference<
-        "mutation",
-        "internal",
-        { args: any; functionHandle: string; ms: number; name?: string },
-        any
-      >;
-    };
     public: {
       del: FunctionReference<
         "mutation",
