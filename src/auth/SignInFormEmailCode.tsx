@@ -4,7 +4,7 @@ import { SignInWithEmailCode } from "@/auth/SignInWithEmailCode";
 import { SignInWithOAuth } from "@/auth/SignInWithOAuth";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
 import {
