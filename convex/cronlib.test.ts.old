@@ -1,4 +1,4 @@
-// XXX these tests are all broken now that we're on the components alpha
+// XXX these tests are temporarily broken while we're on the components alpha
 
 import { expect, test, vi, VitestUtils } from "vitest";
 import schema from "./schema";

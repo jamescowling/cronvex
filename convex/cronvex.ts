@@ -10,7 +10,7 @@ import {
 } from "./_generated/server";
 import { components, internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
-import { auth } from "./auth";
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { Crons } from "@convex-dev/crons";
 
 const crons = new Crons(components.crons);
@@ -26,7 +26,7 @@ export const registerJob = mutation({
   },
   handler: async (ctx, args) => {
     console.log("registerJob", args);
-    const userId = await auth.getUserId(ctx); // XXX fix
+    const userId = await getAuthUserId(ctx);
     if (userId == null) {
       throw new Error("User not found");
     }
@@ -60,7 +60,7 @@ export const deleteJobs = mutation({
     ids: v.array(v.id("jobs")),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
     if (userId == null) {
       throw new Error("User not found");
     }
@@ -98,7 +98,7 @@ export type JobWithCron = {
 
 export const listJobs = query({
   handler: async (ctx) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
     if (userId == null) {
       return [];
     }
@@ -226,7 +226,7 @@ export const log = internalMutation({
 
 export const tailLogs = query({
   handler: async (ctx) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
     if (userId == null) {
       return [];
     }
