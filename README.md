@@ -1,5 +1,7 @@
 # Cronvex
 
+// XXX change now that we're using the new crons component
+
 Send http requests on a periodic schedule.
 
 This is an implementation of a http webhook-calling cron service running on

@@ -8,11 +8,12 @@ import {
   internalMutation,
   internalAction,
 } from "./_generated/server";
-import { internal } from "./_generated/api";
+import { components, internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 import { auth } from "./auth";
-import { components } from "./_generated/server";
-import { createFunctionHandle } from "convex/server";
+import { Crons } from "@convex-dev/crons";
+
+const crons = new Crons(components.crons);
 
 export const registerJob = mutation({
   args: {
@@ -25,7 +26,7 @@ export const registerJob = mutation({
   },
   handler: async (ctx, args) => {
     console.log("registerJob", args);
-    const userId = await auth.getUserId(ctx);
+    const userId = await auth.getUserId(ctx); // XXX fix
     if (userId == null) {
       throw new Error("User not found");
     }
@@ -40,14 +41,16 @@ export const registerJob = mutation({
       headers: args.headers,
       body: args.body,
     });
-    const functionHandle = await createFunctionHandle(
-      internal.cronvex.callWebhook
+    const cronId = await crons.register(
+      ctx,
+      {
+        kind: "cron",
+        cronspec: args.cronspec,
+      },
+      internal.cronvex.callWebhook,
+      { id: jobId },
+      args.name
     );
-    const cronId = await ctx.runMutation(components.crons.lib.registerCron, {
-      cronspec: args.cronspec,
-      functionHandle,
-      args: { id: jobId },
-    });
     await ctx.db.patch(jobId, { cronId });
   },
 });
@@ -73,9 +76,7 @@ export const deleteJobs = mutation({
         if (job.cronId == null) {
           throw new Error("Cron not found");
         }
-        await ctx.runMutation(components.crons.lib.del, {
-          id: job.cronId,
-        });
+        await crons.del(ctx, { id: job.cronId });
         await ctx.db.delete(id);
       })
     );
@@ -110,9 +111,7 @@ export const listJobs = query({
         if (jobWithCron.cronId == null) {
           throw new Error("Cron not found");
         }
-        const cron = await ctx.runQuery(components.crons.lib.get, {
-          id: jobWithCron.cronId,
-        });
+        const cron = await crons.get(ctx, { id: jobWithCron.cronId });
         if (cron == null) {
           throw new Error("Cron not found");
         }

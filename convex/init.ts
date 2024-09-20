@@ -1,8 +1,11 @@
+// Example of using the Crons component to register a cron job.
+
 import { v } from "convex/values";
-import { internal } from "./_generated/api";
 import { internalMutation } from "./_generated/server";
-import { components } from "./_generated/server";
-import { createFunctionHandle } from "convex/server";
+import { components, internal } from "./_generated/api";
+import { Crons } from "@convex-dev/crons";
+
+const crons = new Crons(components.crons);
 
 export const exampleCron = internalMutation({
   args: {
@@ -16,21 +19,18 @@ export const exampleCron = internalMutation({
 // This is an idempotent bootstrap script that can be used to set up crons
 // similarly to the old crons.ts file. It needs to be run manually, e.g., by
 // running `convex dev --run init`.
-export default internalMutation({
+export const registerDailyCron = internalMutation({
   handler: async (ctx) => {
-    if (
-      (await ctx.runQuery(components.crons.lib.getByName, {
-        name: "exampleDailyCron",
-      })) == null
-    ) {
-      await ctx.runMutation(components.crons.lib.registerCron, {
-        name: "exampleDailyCron",
-        cronspec: "0 0 * * *",
-        functionHandle: await createFunctionHandle(internal.init.exampleCron),
-        args: {
+    if ((await crons.get(ctx, { name: "exampleDailyCron" })) === null) {
+      await crons.register(
+        ctx,
+        { kind: "cron", cronspec: "0 0 * * *" },
+        internal.init.exampleCron,
+        {
           message: "unnecessary daily log message!",
         },
-      });
+        "exampleDailyCron"
+      );
     }
   },
 });
