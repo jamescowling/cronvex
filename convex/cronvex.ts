@@ -76,7 +76,7 @@ export const deleteJobs = mutation({
         if (job.cronId == null) {
           throw new Error("Cron not found");
         }
-        await crons.del(ctx, { id: job.cronId });
+        await crons.delete(ctx, { id: job.cronId });
         await ctx.db.delete(id);
       })
     );
