@@ -173,7 +173,12 @@ export function Register() {
           <Button>Add a cron</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[600px]">
-          <form onSubmit={handleRegisterCron}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void handleRegisterCron(e);
+            }}
+          >
             <DialogHeader>
               <DialogTitle>Add Cron</DialogTitle>
               <DialogDescription>

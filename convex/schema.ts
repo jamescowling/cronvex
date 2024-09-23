@@ -5,41 +5,48 @@ import { authTables } from "@convex-dev/auth/server";
 export default defineSchema({
   ...authTables,
 
-  // User space crons table. This is designed to be independent of any specific
-  // Cronvex functionality since we plan on pulling this out into a helper
-  // library to be used elsewhere.
+  // XXX delete
   crons: defineTable({
-    name: v.optional(v.string()), // optional cron name
-    functionName: v.string(), // fully qualified function name
-    args: v.any(), // args as an object
+    args: v.any(),
+    executionJobId: v.optional(v.id("_scheduled_functions")),
+    functionName: v.string(),
+    name: v.optional(v.string()),
     schedule: v.union(
       v.object({
         kind: v.literal("interval"),
-        ms: v.float64(), // milliseconds
+        ms: v.float64(),
       }),
       v.object({
+        cronspec: v.string(),
         kind: v.literal("cron"),
-        cronspec: v.string(), // "* * * * *"
       })
     ),
     schedulerJobId: v.optional(v.id("_scheduled_functions")),
-    executionJobId: v.optional(v.id("_scheduled_functions")),
   }).index("name", ["name"]),
 
-  // Registered http request-sending jobs. Each is associated with an entry in the
-  // crons table which is the underlying scheduler for the job.
+  // XXX delete
   jobs: defineTable({
+    body: v.optional(v.string()),
+    cronId: v.optional(v.id("crons")),
+    headers: v.optional(v.string()),
+    method: v.string(),
+    name: v.optional(v.string()),
+    url: v.string(),
     userId: v.id("users"),
-    // This name is unrelated to the name in the crons table. The crons table
-    // name is a unique name across all crons and used as an identifier whereas
-    // the name in this table is just a convenient per-user name for showing in
-    // their UI.
+  }).index("userId", ["userId"]),
+
+  // Registered http request-sending jobs.
+  requests: defineTable({
+    userId: v.id("users"),
+    // This name is unrelated to the name of the actual cron itself. The latter
+    // is an optional unique identifier across all crons whereas the name in
+    // this table is just a convenient per-user name for showing in their UI.
     name: v.optional(v.string()),
     url: v.string(),
     method: v.string(), // "GET", "POST", etc.
     headers: v.optional(v.string()), // TODO: migrate to Record type when we add it
     body: v.optional(v.string()),
-    cronId: v.optional(v.id("crons")),
+    cronId: v.optional(v.string()),
   }).index("userId", ["userId"]),
 
   // Web logs from outgoing requests.

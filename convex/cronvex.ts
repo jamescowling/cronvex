@@ -8,10 +8,12 @@ import {
   internalMutation,
   internalAction,
 } from "./_generated/server";
-import { internal } from "./_generated/api";
-import { cron } from "./cronlib";
+import { components, internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
-import { auth } from "./auth";
+import { getAuthUserId } from "@convex-dev/auth/server";
+import { Crons } from "@convex-dev/crons";
+
+const crons = new Crons(components.crons);
 
 export const registerJob = mutation({
   args: {
@@ -23,14 +25,15 @@ export const registerJob = mutation({
     body: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    console.log("registerJob", args);
+    const userId = await getAuthUserId(ctx);
     if (userId == null) {
       throw new Error("User not found");
     }
     if (args.headers) {
       new Headers(JSON.parse(args.headers)); // validate headers
     }
-    const jobId = await ctx.db.insert("jobs", {
+    const jobId = await ctx.db.insert("requests", {
       userId,
       url: args.url,
       name: args.name,
@@ -38,13 +41,14 @@ export const registerJob = mutation({
       headers: args.headers,
       body: args.body,
     });
-    const cronId = await cron(
+    const cronId = await crons.register(
       ctx,
-      args.cronspec,
-      internal.cronvex.callWebhook,
       {
-        id: jobId,
-      }
+        kind: "cron",
+        cronspec: args.cronspec,
+      },
+      internal.cronvex.callWebhook,
+      { id: jobId }
     );
     await ctx.db.patch(jobId, { cronId });
   },
@@ -52,10 +56,10 @@ export const registerJob = mutation({
 
 export const deleteJobs = mutation({
   args: {
-    ids: v.array(v.id("jobs")),
+    ids: v.array(v.id("requests")),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
     if (userId == null) {
       throw new Error("User not found");
     }
@@ -71,7 +75,7 @@ export const deleteJobs = mutation({
         if (job.cronId == null) {
           throw new Error("Cron not found");
         }
-        await ctx.db.delete(job.cronId);
+        await crons.delete(ctx, { id: job.cronId });
         await ctx.db.delete(id);
       })
     );
@@ -79,7 +83,7 @@ export const deleteJobs = mutation({
 });
 
 export type JobWithCron = {
-  _id: Id<"jobs">;
+  _id: Id<"requests">;
   _creationTime: number;
   userId: Id<"users">;
   name?: string | undefined;
@@ -87,18 +91,18 @@ export type JobWithCron = {
   method: string;
   headers?: string | undefined;
   body?: string | undefined;
-  cronId?: Id<"crons"> | undefined;
+  cronId?: string | undefined;
   cronspec?: string;
 };
 
 export const listJobs = query({
   handler: async (ctx) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
     if (userId == null) {
       return [];
     }
     const jobsWithCrons: JobWithCron[] = await ctx.db
-      .query("jobs")
+      .query("requests")
       .withIndex("userId", (q) => q.eq("userId", userId))
       .collect();
     await Promise.all(
@@ -106,7 +110,7 @@ export const listJobs = query({
         if (jobWithCron.cronId == null) {
           throw new Error("Cron not found");
         }
-        const cron = await ctx.db.get(jobWithCron.cronId);
+        const cron = await crons.get(ctx, { id: jobWithCron.cronId });
         if (cron == null) {
           throw new Error("Cron not found");
         }
@@ -122,7 +126,7 @@ export const listJobs = query({
 
 export const callWebhook = internalMutation({
   args: {
-    id: v.id("jobs"),
+    id: v.id("requests"),
   },
   handler: async (ctx, args) => {
     const job = await ctx.db.get(args.id);
@@ -221,7 +225,7 @@ export const log = internalMutation({
 
 export const tailLogs = query({
   handler: async (ctx) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
     if (userId == null) {
       return [];
     }

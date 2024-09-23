@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
