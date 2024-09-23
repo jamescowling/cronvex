@@ -5,13 +5,42 @@ import { authTables } from "@convex-dev/auth/server";
 export default defineSchema({
   ...authTables,
 
-  // Registered http request-sending jobs.
+  // XXX delete
+  crons: defineTable({
+    args: v.any(),
+    executionJobId: v.optional(v.id("_scheduled_functions")),
+    functionName: v.string(),
+    name: v.optional(v.string()),
+    schedule: v.union(
+      v.object({
+        kind: v.literal("interval"),
+        ms: v.float64(),
+      }),
+      v.object({
+        cronspec: v.string(),
+        kind: v.literal("cron"),
+      })
+    ),
+    schedulerJobId: v.optional(v.id("_scheduled_functions")),
+  }).index("name", ["name"]),
+
+  // XXX delete
   jobs: defineTable({
+    body: v.optional(v.string()),
+    cronId: v.optional(v.id("crons")),
+    headers: v.optional(v.string()),
+    method: v.string(),
+    name: v.optional(v.string()),
+    url: v.string(),
+    userId: v.id("users"),
+  }).index("userId", ["userId"]),
+
+  // Registered http request-sending jobs.
+  requests: defineTable({
     userId: v.id("users"),
     // This name is unrelated to the name of the actual cron itself. The latter
-    // is an optional unique ifentifier across all crons and used as an
-    // identifier whereas the name in this table is just a convenient per-user
-    // name for showing in their UI.
+    // is an optional unique identifier across all crons whereas the name in
+    // this table is just a convenient per-user name for showing in their UI.
     name: v.optional(v.string()),
     url: v.string(),
     method: v.string(), // "GET", "POST", etc.
