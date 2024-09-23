@@ -83,7 +83,7 @@ export function Crons() {
   }
 
   async function deleteBatch(ids: string[]) {
-    await deleteJobs({ ids: ids as Id<"requests">[] });
+    await deleteJobs({ ids: ids as Id<"jobs">[] });
   }
 
   return (

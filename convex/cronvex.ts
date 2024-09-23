@@ -33,7 +33,7 @@ export const registerJob = mutation({
     if (args.headers) {
       new Headers(JSON.parse(args.headers)); // validate headers
     }
-    const jobId = await ctx.db.insert("requests", {
+    const jobId = await ctx.db.insert("jobs", {
       userId,
       url: args.url,
       name: args.name,
@@ -56,7 +56,7 @@ export const registerJob = mutation({
 
 export const deleteJobs = mutation({
   args: {
-    ids: v.array(v.id("requests")),
+    ids: v.array(v.id("jobs")),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -83,7 +83,7 @@ export const deleteJobs = mutation({
 });
 
 export type JobWithCron = {
-  _id: Id<"requests">;
+  _id: Id<"jobs">;
   _creationTime: number;
   userId: Id<"users">;
   name?: string | undefined;
@@ -102,7 +102,7 @@ export const listJobs = query({
       return [];
     }
     const jobsWithCrons: JobWithCron[] = await ctx.db
-      .query("requests")
+      .query("jobs")
       .withIndex("userId", (q) => q.eq("userId", userId))
       .collect();
     await Promise.all(
@@ -126,7 +126,7 @@ export const listJobs = query({
 
 export const callWebhook = internalMutation({
   args: {
-    id: v.id("requests"),
+    id: v.id("jobs"),
   },
   handler: async (ctx, args) => {
     const job = await ctx.db.get(args.id);
