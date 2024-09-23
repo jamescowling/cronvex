@@ -19,20 +19,6 @@ export default defineSchema({
     cronId: v.optional(v.string()),
   }).index("userId", ["userId"]),
 
-  // Registered http request-sending jobs.
-  requests: defineTable({
-    userId: v.id("users"),
-    // This name is unrelated to the name of the actual cron itself. The latter
-    // is an optional unique identifier across all crons whereas the name in
-    // this table is just a convenient per-user name for showing in their UI.
-    name: v.optional(v.string()),
-    url: v.string(),
-    method: v.string(), // "GET", "POST", etc.
-    headers: v.optional(v.string()), // TODO: migrate to Record type when we add it
-    body: v.optional(v.string()),
-    cronId: v.optional(v.string()),
-  }).index("userId", ["userId"]),
-
   // Web logs from outgoing requests.
   weblogs: defineTable({
     userId: v.id("users"),
