@@ -5,7 +5,14 @@ export const migrate = internalMutation({
     const requests = await ctx.db.query("requests").collect();
 
     for (const r of requests) {
-      await ctx.db.insert("jobs", r);
+      await ctx.db.insert("jobs", {
+        userId: r.userId,
+        url: r.url,
+        method: r.method,
+        headers: r.headers,
+        body: r.body,
+        cronId: r.cronId,
+      });
     }
   },
 });
