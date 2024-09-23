@@ -15,7 +15,6 @@ import type * as VerificationCodeEmail from "../VerificationCodeEmail.js";
 import type * as auth from "../auth.js";
 import type * as cronvex from "../cronvex.js";
 import type * as http from "../http.js";
-import type * as init from "../init.js";
 import type * as migration from "../migration.js";
 
 import type {
@@ -37,7 +36,6 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   cronvex: typeof cronvex;
   http: typeof http;
-  init: typeof init;
   migration: typeof migration;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
