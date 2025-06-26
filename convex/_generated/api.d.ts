@@ -19,6 +19,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+
 /**
  * A utility for referencing Convex functions in your app's API.
  *
@@ -65,7 +66,7 @@ export declare const components: {
           name?: string;
           schedule:
             | { kind: "interval"; ms: number }
-            | { cronspec: string; kind: "cron" };
+            | { cronspec: string; kind: "cron"; tz?: string };
         } | null
       >;
       list: FunctionReference<
@@ -79,7 +80,7 @@ export declare const components: {
           name?: string;
           schedule:
             | { kind: "interval"; ms: number }
-            | { cronspec: string; kind: "cron" };
+            | { cronspec: string; kind: "cron"; tz?: string };
         }>
       >;
       register: FunctionReference<
@@ -91,7 +92,7 @@ export declare const components: {
           name?: string;
           schedule:
             | { kind: "interval"; ms: number }
-            | { cronspec: string; kind: "cron" };
+            | { cronspec: string; kind: "cron"; tz?: string };
         },
         string
       >;
